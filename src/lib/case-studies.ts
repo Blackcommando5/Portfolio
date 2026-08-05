@@ -2071,6 +2071,499 @@ const eventora: CaseStudy = {
 };
 
 /* ══════════════════════════════════════════════════════════════════════════ */
+/* Client work. Described by sector only — no business name, location, phone,
+   address, or dealership appears in the text or in any screenshot.            */
+
+const bakeryStorefront: CaseStudy = {
+  slug: "bakery-storefront",
+  title: "Bakery Ingredients Wholesaler — Storefront & Admin",
+  tagline:
+    "A trade catalogue is the easy half. The reason this exists is the back office behind it.",
+  role: "Solo — architecture, storefront, twelve-section admin, test suite",
+  timeline: "2026",
+  status: "shipped",
+  proprietary: true,
+
+  summary:
+    "A wholesale distributor of baking ingredients — selling premixes, chocolate, and dairy to bakeries, cafes, hotels, and manufacturers — needed a site that did more than list products. Trade buying is relationship work: enquiries arrive, get quoted, get chased, and either close or go quiet, and none of that fits a contact form. So the storefront is the visible quarter of the build. Behind it sits a twelve-section admin covering catalogue, orders, a lead pipeline with follow-ups and a communications log, a loyalty scheme, editable site content, and a configurable chatbot — over a sixteen-model domain, with eleven test suites and a 3D product viewer on the catalogue.",
+
+  metrics: [
+    { value: "16", label: "domain models behind the storefront and admin" },
+    { value: "12", label: "admin sections, not one generic CRUD screen" },
+    { value: "11", label: "Vitest suites — the only client build here with tests" },
+    { value: "4", label: "nested route layouts: marketing, shop, account, admin" },
+    { value: "3D", label: "in-browser product viewer on catalogue items" },
+    { value: "static", label: "hash-routed build, deployable to any file host" },
+  ],
+
+  problem: {
+    heading: "The problem",
+    body: "Wholesale is not retail with bigger boxes. A trade customer asks for a quote on a pallet, negotiates, reorders monthly, and expects someone to remember them — and the software most small distributors have is a phone and a notebook.",
+    bullets: [
+      "Enquiries arrived by call and message with nothing recording what was promised or when to chase.",
+      "The catalogue lived in a PDF price list that went stale the moment a brand changed packaging.",
+      "Staff could not change a price, a product, or a page without going back to a developer.",
+      "Repeat buyers are the whole business, and there was no way to recognise or reward them.",
+      "Ingredients are bought on appearance and pack format, which a thumbnail communicates badly.",
+    ],
+  },
+
+  approach: [
+    {
+      heading: "Treat the back office as the product",
+      body: "Twelve distinct admin sections rather than one table-per-model CRUD generator: catalogue and categories, brands, orders, a lead pipeline, customers, loyalty, enquiries, the chatbot, site content, analytics, and settings. Each is shaped around a job someone in the business actually does, which is the difference between admin software people use and admin software they work around.",
+    },
+    {
+      heading: "Model the sales conversation, not just the sale",
+      body: "Alongside orders and order lines, the domain carries leads, follow-ups, and a communications log as first-class entities. That means an enquiry is not a dead email — it becomes a record with a next action against it and a history of what was said. For a business whose revenue depends on being chased-up properly, that structure is the feature.",
+    },
+    {
+      heading: "Let the business own its own content",
+      body: "Site content and FAQs are models, not markup, so page copy and answers are edited in the admin rather than in a component. Combined with catalogue and brand management, it means routine change — a new supplier, a revised answer, a seasonal line — never becomes a deployment.",
+    },
+    {
+      heading: "Show the product properly",
+      body: "Ingredient buyers care about pack format and presentation, so catalogue items can be inspected in 3D in the browser rather than judged from one flat photograph. It is a small addition that answers the specific question a trade buyer has: what am I actually receiving.",
+    },
+    {
+      heading: "Keep ordering in the channel they already use",
+      body: "The primary call to action hands off to WhatsApp with context attached rather than pushing a self-serve checkout. Wholesale orders get negotiated — quantities, substitutions, delivery windows — so routing to a conversation matches how the trade actually closes, and it means the site does not need a payment integration to be useful on day one.",
+    },
+    {
+      heading: "Ship it as a static bundle",
+      body: "The whole thing builds to static files and routes on the URL hash, so it deploys to any file host with no server, no rewrite rules, and no runtime to keep alive. For a client site that has to stay cheap and boring to host, that is a feature rather than a limitation.",
+    },
+  ],
+
+  flows: [
+    {
+      actor: "Trade buyer",
+      steps: [
+        { label: "Browse", detail: "Catalogue by category and brand, with faceted filters and search" },
+        { label: "Inspect", detail: "Product detail with a 3D viewer for pack format and presentation" },
+        { label: "Ask", detail: "Enquiry form, or a chat widget, or straight to WhatsApp with context" },
+        { label: "Account", detail: "Order history and accumulated rewards under a customer profile" },
+      ],
+    },
+    {
+      actor: "Staff",
+      steps: [
+        { label: "Dashboard", detail: "Revenue chart and headline counts on landing" },
+        { label: "Work the pipeline", detail: "Leads with follow-ups due and a log of what was communicated" },
+        { label: "Maintain catalogue", detail: "Products and variants, categories, brands — no developer needed" },
+        { label: "Fulfil", detail: "Orders and their lines, enquiries triaged" },
+        { label: "Retain", detail: "Loyalty entries and referrals against customer profiles" },
+        { label: "Edit the site", detail: "Page content, FAQs, and chatbot answers as data" },
+      ],
+    },
+  ],
+
+  architecture: `  ┌──────── React 19 + Vite (static bundle) ────────┐
+  │  hash router ─► four nested layouts             │
+  │                                                 │
+  │  MarketingLayout   home · about · contact       │
+  │  ShopLayout        catalogue · brands · detail  │
+  │                    filters · search · 3D viewer │
+  │  AccountLayout     profile · orders · rewards   │
+  │  AdminLayout       twelve sections              │
+  │                    DataTable · charts · stats   │
+  │                                                 │
+  │  ChatWidget (answers configured in admin)       │
+  │  WhatsApp hand-off with enquiry context         │
+  └──────────────────────┬──────────────────────────┘
+                         ▼
+   ┌───────── domain, typed from Prisma models ─────────┐
+   │ Product · ProductVariant · Category · Brand        │
+   │ Order · OrderItem · Enquiry                        │
+   │ Lead · Followup · CommsLog        ← the pipeline   │
+   │ CustomerProfile · LoyaltyEntry · Referral          │
+   │ SiteContent · Faq · Settings      ← editable copy  │
+   └────────────────────────────────────────────────────┘`,
+
+  architectureNotes: [
+    "Four nested layouts keep the marketing, shop, account, and admin surfaces genuinely separate.",
+    "Leads, follow-ups, and a communications log make an enquiry a tracked record rather than an email.",
+    "Site content and FAQs are models, so copy changes never require a deployment.",
+    "Hash routing means the static build works on any host without server rewrite rules.",
+    "Eleven Vitest suites cover the catalogue, filters, chat widget, enquiry form, loyalty rules, and admin table.",
+  ],
+
+  decisions: [
+    {
+      decision: "Build a twelve-section admin instead of a generic CRUD panel",
+      why: "A distributor's staff do distinct jobs — chasing a lead is not editing a product. Sections shaped around those jobs get used; a table-per-model panel gets worked around with a spreadsheet.",
+      tradeoff: "Far more surface to build and maintain than generated admin screens, and twelve sections is a lot of UI for one operator to keep consistent. It only pays because the alternative was the business not using it at all.",
+    },
+    {
+      decision: "Route on the URL hash and ship a static bundle",
+      why: "No server, no rewrite configuration, no runtime to keep alive — it deploys anywhere and costs nothing to host, which matters for a small-business site that must stay boring.",
+      tradeoff: "Hash URLs are uglier and weaker for SEO than real paths, and there is no server rendering, so first paint carries the whole bundle. For a trade catalogue found mostly through direct contact and referral that is an acceptable trade; for a consumer storefront it would not be.",
+    },
+    {
+      decision: "Hand ordering off to WhatsApp rather than build checkout",
+      why: "Wholesale orders are negotiated — quantities, substitutions, delivery. A conversation closes those; a cart does not. It also meant the site was useful before any payment integration existed.",
+      tradeoff: "Nothing about the order is captured automatically at the point of intent, so the admin's order records depend on staff entering what was agreed. A quote-and-approve flow in-app would close that gap without pretending wholesale is self-serve.",
+    },
+    {
+      decision: "Keep Prisma models as the type source with data served locally",
+      why: "The generated model types describe the domain precisely and keep the front end honest about its shape, without committing the client to running and paying for a database before the site earned it.",
+      tradeoff: "It is a half-step: the types imply a backend the deployed build does not talk to, so the admin edits are not yet durable across users. Connecting it is the obvious next move, and the typing means that move is mostly mechanical.",
+    },
+  ],
+
+  stack: [
+    {
+      layer: "App",
+      items: ["React 19", "Vite", "React Router 6 (hash)", "Tailwind", "Base UI", "shadcn", "Geist", "lucide-react"],
+    },
+    {
+      layer: "Catalogue",
+      items: ["Faceted filter sidebar", "search", "product grid", "3D viewer via model-viewer", "Three.js"],
+    },
+    {
+      layer: "Admin",
+      items: ["Twelve sections", "reusable data table", "Recharts revenue and analytics", "stat cards", "configurable chatbot"],
+    },
+    {
+      layer: "Domain",
+      items: ["Prisma-generated model types", "products and variants", "leads, follow-ups, comms log", "loyalty and referrals", "site content and FAQs"],
+    },
+    {
+      layer: "Quality",
+      items: ["Vitest", "Testing Library", "eleven suites", "GitHub Actions workflow"],
+    },
+  ],
+
+  screens: [
+    {
+      group: "Storefront",
+      access: "public",
+      shots: [
+        {
+          route: "/",
+          label: "Home",
+          detail: "Positioned as trade rather than retail — wholesale framing, authorised-brand and delivery assurances, and a WhatsApp order path as the primary action.",
+          src: "/projects/bakery-storefront/home.webp",
+        },
+        {
+          route: "/products",
+          label: "Catalogue",
+          detail: "Faceted filtering and search across the product range, with variants behind each item.",
+          src: "/projects/bakery-storefront/catalog.webp",
+        },
+        {
+          route: "/brands",
+          label: "Brands",
+          detail: "Distributed brands as a first-class browse axis, which is how trade buyers actually shop.",
+          src: "/projects/bakery-storefront/brands.webp",
+        },
+      ],
+    },
+    {
+      group: "Admin",
+      access: "admin",
+      shots: [
+        {
+          route: "/admin",
+          label: "Dashboard",
+          detail: "Landing view with headline counts and a revenue chart. The section list on the left is the twelve-part operational surface.",
+          src: "/projects/bakery-storefront/admin-dashboard.webp",
+        },
+        {
+          route: "/admin/products",
+          label: "Catalogue management",
+          detail: "Products, variants, and pricing maintained by staff without a developer or a deployment.",
+          src: "/projects/bakery-storefront/admin-products.webp",
+        },
+        {
+          route: "/admin/leads",
+          label: "Lead pipeline",
+          detail: "The section that justifies the build: enquiries as tracked records with follow-ups and a communications history, rather than an inbox.",
+          src: "/projects/bakery-storefront/admin-leads.webp",
+        },
+        {
+          route: "/admin/analytics",
+          label: "Analytics",
+          detail: "Charted trends over orders and revenue, built on the same data table and chart primitives as the rest of the admin.",
+          src: "/projects/bakery-storefront/admin-analytics.webp",
+        },
+      ],
+    },
+    {
+      group: "Customer account",
+      access: "authenticated",
+      shots: [
+        {
+          route: "/account/rewards",
+          label: "Rewards",
+          detail: "Loyalty balance and history for a repeat trade buyer — the retention mechanism the distributor had no way to run before.",
+          src: "/projects/bakery-storefront/account-rewards.webp",
+        },
+      ],
+    },
+  ],
+
+  engineering: [
+    {
+      heading: "Tested, which for a client site of this size is unusual",
+      body: "Eleven Vitest suites cover the catalogue logic, the filter sidebar, the chat widget, the enquiry form, the loyalty rules, the admin data table, the header, and a set of type and utility checks, with a smoke test over the whole thing and a GitHub Actions workflow to run them. On a solo client build, tests are the first thing dropped under deadline; keeping them here is what made a twelve-section admin safe to keep changing.",
+    },
+    {
+      heading: "It used to be a Next.js app",
+      body: "The migration to Vite left evidence behind: a Next environment declaration, a create-next-app README that still describes the project as a Next.js app, and a test mock standing in for a server-only import. None of it breaks the build, but the README actively misdescribes the stack to anyone who opens the repository, and the leftovers make the project's history harder to read than its present.",
+      bullets: [
+        "Rewrite the README to describe the Vite build it actually is.",
+        "Remove the Next-era declarations and the server-only mock now nothing imports it.",
+      ],
+    },
+    {
+      heading: "Where it stops",
+      body: "The deployed build is a static bundle reading local data, so admin edits are not yet persisted for other users and the Prisma types describe a backend the client does not talk to. That is a deliberate staging decision rather than an oversight — it let the site go live and prove itself before the distributor paid for a database — but it does mean the admin is currently a working interface over a data layer that needs connecting.",
+    },
+  ],
+
+  outcome: {
+    heading: "Outcome",
+    body: "A trade site whose real value is behind the login: a catalogue the client maintains themselves, a lead pipeline that makes follow-up a tracked obligation rather than a memory, and a loyalty scheme for the repeat buyers the business runs on. The decisions I would defend are shaping the admin around jobs instead of tables, modelling the sales conversation as well as the sale, and keeping tests on a solo client build so twelve admin sections stayed safe to change.",
+    bullets: [
+      "Twelve purpose-built admin sections over a sixteen-model domain.",
+      "Leads, follow-ups, and a communications log — the enquiry becomes a record with a next action.",
+      "Content and FAQs as data, so routine copy changes never need a deployment.",
+      "Eleven test suites and CI on a client project, which is what kept that surface maintainable.",
+    ],
+  },
+
+  roadmap: [
+    "Connect the admin to a live database so edits persist across users",
+    "A quote-and-approve flow to capture negotiated wholesale orders at the point of intent",
+    "Rewrite the README and remove the leftover Next.js artefacts",
+    "Real paths instead of hash routing, with prerendering for the catalogue",
+    "Role separation between staff and administrators",
+  ],
+};
+
+const furnitureRetail: CaseStudy = {
+  slug: "furniture-retail",
+  title: "Furniture Retail — Marketing Site",
+  tagline:
+    "Two things kill small-business sites: a developer needed for every edit, and a contact form whose emails quietly stop arriving. This was built to avoid both.",
+  role: "Solo — build, content architecture, SEO",
+  timeline: "2026",
+  status: "shipped",
+  proprietary: true,
+
+  summary:
+    "A furniture retailer needed a site that would be found locally and take enquiries reliably. The interesting constraints were not technical ambition but the two failure modes that actually retire small-business websites. The first is content: if changing a price means messaging a developer, the site goes stale within months. So every piece of content — business details, catalogue, categories, testimonials — lives in typed data files the owner edits directly, with categories driving both the URLs and the catalogue filters from one definition. The second is the contact form: rather than an email path that can silently break, enquiries default to a pre-filled WhatsApp hand-off, landing in the channel the owner already answers all day.",
+
+  metrics: [
+    { value: "4", label: "content files the owner edits — no components touched" },
+    { value: "0", label: "backend required for enquiries to work" },
+    { value: "1", label: "definition drives categories, URLs, and filters" },
+    { value: "JSON-LD", label: "structured data, plus sitemap, robots, and dynamic OG" },
+    { value: "in-code", label: "placeholders marked so nothing provisional ships" },
+  ],
+
+  problem: {
+    heading: "The problem",
+    body: "A local retailer's website has one job — be found, then start a conversation — and it usually fails at one of two unglamorous points long before design matters.",
+    bullets: [
+      "Content goes stale because every change needs a developer, so prices and stock quietly stop matching reality.",
+      "Contact forms fail silently. An email path with a broken key or a spam-filtered sender loses enquiries with no error anyone sees.",
+      "Local discovery depends on structured data and metadata that a hand-built site usually skips entirely.",
+      "A site launched with placeholder copy tends to keep it, because nothing marks what was provisional.",
+    ],
+  },
+
+  approach: [
+    {
+      heading: "Make content a data file, not markup",
+      body: "Business details, the product catalogue, categories, and testimonials each live in their own typed module, deliberately separated from the components that render them. The owner opens one file and edits values with types catching a malformed entry before it ships. It is a deliberately unfashionable choice — no CMS, no database, no admin login — and for a site of this size it removes an entire class of dependency and cost.",
+    },
+    {
+      heading: "Derive the URLs and the filters from one definition",
+      body: "Categories are defined once and then drive the catalogue routes, the filter controls, and the navigation together. Adding a category is one entry, not a route plus a filter option plus a nav item that can drift out of step. It is the small structural decision that keeps a data-driven site from rotting as it grows.",
+    },
+    {
+      heading: "Send enquiries where the owner already is",
+      body: "The form composes the enquiry into a pre-filled WhatsApp message and hands off. There is no server to run, no API key to expire, no deliverability to lose, and no silent failure mode — the customer can see the message they are about to send. It also puts the conversation in the app the owner answers within minutes rather than an inbox checked weekly. A Resend email path exists behind an environment variable for when that changes.",
+    },
+    {
+      heading: "Treat discoverability as a feature, not a checklist",
+      body: "The site generates its own sitemap and robots rules, produces a dynamic Open Graph image so shared links render properly, and emits JSON-LD marking it up as a furniture store with its trading details. For a business whose customers search locally, that structured data is closer to the point of the site than any animation on it.",
+    },
+    {
+      heading: "Mark what is provisional",
+      body: "Placeholder content — trading hours, coordinates, stock photography, reviews — is tagged with searchable markers in the code, so the gap between a demo-ready build and a launch-ready one is a search rather than a memory. Sites ship with fake reviews and a wrong closing time because nobody wrote down which parts were pretend.",
+    },
+  ],
+
+  flows: [
+    {
+      actor: "Customer",
+      steps: [
+        { label: "Arrive", detail: "Usually from local search, landing on the home page or a category" },
+        { label: "Browse", detail: "Catalogue filtered by category, driven by the same definition as the URLs" },
+        { label: "Enquire", detail: "Form composes a pre-filled WhatsApp message, or one tap to call" },
+        { label: "Visit", detail: "Directions hand off to the maps app from the trading details" },
+      ],
+    },
+    {
+      actor: "Owner",
+      steps: [
+        { label: "Open a data file", detail: "Business details, products, categories, or testimonials" },
+        { label: "Edit values", detail: "Types reject a malformed entry before it can reach the site" },
+        { label: "Deploy", detail: "Push and the host rebuilds — no CMS, no admin login, no database" },
+        { label: "Answer", detail: "Enquiries arrive as WhatsApp messages alongside everything else" },
+      ],
+    },
+  ],
+
+  architecture: `  ┌──────── Next.js 14 App Router ─────────┐
+  │  /                 home                 │
+  │  /products         catalogue            │
+  │  /products/[cat]   filtered by category │
+  │  /about  /contact                       │
+  │  /api/contact      optional email path  │
+  │                                         │
+  │  sitemap.ts · robots.ts                 │
+  │  opengraph-image.tsx  (dynamic)         │
+  │  JSON-LD  (FurnitureStore)              │
+  └──────────────────┬──────────────────────┘
+                     ▼
+  ┌──── content the owner edits, typed ─────┐
+  │  business.ts      details · hours · map │
+  │  products.ts      catalogue · featured  │
+  │  categories.ts    ─► drives URLs and    │
+  │                      catalogue filters  │
+  │  testimonials.ts  reviews               │
+  └──────────────────┬──────────────────────┘
+                     ▼
+        WhatsApp hand-off  (default)
+        Resend email       (behind an env var)`,
+
+  architectureNotes: [
+    "Categories are defined once and drive the routes, the filters, and the navigation together.",
+    "Enquiries need no backend by default — the form composes a message and hands off to WhatsApp.",
+    "Validation is schema-based, so a malformed enquiry is caught before any hand-off happens.",
+    "Sitemap, robots, and the social image are generated rather than maintained by hand.",
+    "Provisional content is tagged with searchable markers so launch readiness is checkable.",
+  ],
+
+  decisions: [
+    {
+      decision: "Default enquiries to a WhatsApp hand-off instead of email",
+      why: "It removes the failure mode that loses small businesses the most work. No server, no API key, no spam filter, and the customer sees the message before sending it — plus it lands in the channel the owner already answers within minutes.",
+      tradeoff: "Nothing is recorded server-side, so there is no enquiry log, no analytics on conversion, and no follow-up trail beyond the owner's chat history. It also assumes the customer has WhatsApp. The Resend path exists for when a record matters more than reliability.",
+    },
+    {
+      decision: "Put content in typed files rather than behind a CMS",
+      why: "For four content types and one editor, a CMS is a database, a login, a hosting cost, and another thing that can break. Typed modules give the same edit-without-touching-components benefit with none of that, and types catch mistakes a CMS form would happily accept.",
+      tradeoff: "It assumes an owner willing to edit a text file and commit, which is a real ask and rules out non-technical editing entirely. The moment a second person needs to publish, or someone wants to upload a photo from their phone, this choice has to be revisited.",
+    },
+    {
+      decision: "Derive routes and filters from the category definition",
+      why: "One source means a new category cannot half-exist — appearing in the filter but returning a missing page, or the reverse. That drift is the standard way data-driven catalogues break as they grow.",
+      tradeoff: "Category identifiers end up load-bearing for URLs, so renaming one changes public links and needs redirects. Cheap to live with at this size, worth planning around if the catalogue ever gets large.",
+    },
+    {
+      decision: "Ship stock photography with markers rather than wait for real photos",
+      why: "It let the site be reviewed, approved, and launched while the client's own product photography was still pending, instead of blocking delivery on a photo shoot.",
+      tradeoff: "Placeholder imagery on a live retail site misrepresents the actual stock, which is a real cost for the window between launch and replacement. The in-code markers make the swap a checklist rather than an act of memory, but they do not make the interim state harmless.",
+    },
+  ],
+
+  stack: [
+    {
+      layer: "App",
+      items: ["Next.js 14 App Router", "TypeScript", "Tailwind CSS", "shadcn/ui", "Framer Motion", "Embla carousel"],
+    },
+    {
+      layer: "Forms",
+      items: ["React Hook Form", "Zod schemas", "WhatsApp deep links", "tel: links", "Sonner toasts"],
+    },
+    {
+      layer: "Content",
+      items: ["Typed data modules", "categories as the single source for routes and filters", "in-code launch markers"],
+    },
+    {
+      layer: "Discoverability",
+      items: ["Generated sitemap and robots", "dynamic Open Graph image", "JSON-LD structured data"],
+    },
+    {
+      layer: "Optional backend",
+      items: ["Route handler for email", "Resend behind an environment variable"],
+    },
+  ],
+
+  screens: [
+    {
+      group: "Storefront",
+      access: "public",
+      shots: [
+        {
+          route: "/",
+          label: "Home",
+          detail: "Local-retail positioning with the two actions that matter above the fold — start a WhatsApp chat or call — plus trust markers and trading details in the header.",
+          src: "/projects/furniture-retail/home.webp",
+        },
+        {
+          route: "/products",
+          label: "Catalogue",
+          detail: "Products grouped by the same category definition that generates the routes and the filters.",
+          src: "/projects/furniture-retail/catalog.webp",
+        },
+        {
+          route: "/about",
+          label: "About",
+          detail: "Business story and credentials, rendered from the same typed content the owner edits.",
+          src: "/projects/furniture-retail/about.webp",
+        },
+        {
+          route: "/contact",
+          label: "Contact",
+          detail: "The enquiry form composes a pre-filled WhatsApp message rather than posting to a mail service — the customer sees exactly what they are about to send. Trading details and an embedded map sit alongside it; the map is blanked here because it renders the client's name into its own tiles.",
+          src: "/projects/furniture-retail/contact.webp",
+        },
+      ],
+    },
+  ],
+
+  engineering: [
+    {
+      heading: "Choosing boring on purpose",
+      body: "There is no database, no CMS, no authentication, and no server for the default path. That is not a shortcut — every one of those is a component that can fail, expire, or bill someone, on a site whose job is to be found and start a conversation. Validation still runs against a schema, the catalogue is still typed, and the SEO surface is still generated rather than hand-maintained. The complexity went where it earns something and stayed out of where it does not.",
+    },
+    {
+      heading: "What is deliberately unfinished",
+      body: "Product imagery is stock photography pending the client's own, and trading hours and coordinates are marked as needing confirmation. Those markers exist because the alternative — remembering which parts were provisional — is how sites end up permanently displaying a wrong closing time. Worth stating plainly rather than presenting the build as complete.",
+      bullets: [
+        "Replace stock imagery with the client's own product and showroom photography.",
+        "Confirm trading hours, map coordinates, and contact details before final launch.",
+        "Replace placeholder testimonials with real, attributed reviews.",
+      ],
+    },
+  ],
+
+  outcome: {
+    heading: "Outcome",
+    body: "A fast, discoverable local retail site the owner can keep current without a developer, whose enquiry path has no silent failure mode because it hands off to the app they already live in. The decisions worth defending are the unglamorous ones: content as typed data instead of a CMS, one definition driving categories and URLs and filters together, and generated structured data because local search is where this site earns its keep.",
+    bullets: [
+      "Content in four typed files — edit values, not components.",
+      "Enquiries work with no backend and no silent failure, in the channel the owner answers.",
+      "Categories defined once, driving routes and filters so they cannot drift apart.",
+      "Sitemap, robots, dynamic social image, and JSON-LD generated rather than maintained.",
+    ],
+  },
+
+  roadmap: [
+    "Swap stock photography for the client's own product and showroom images",
+    "Confirm and finalise trading details, then clear the in-code markers",
+    "Optional enquiry logging, so conversations leave a record without losing the WhatsApp path",
+    "A lightweight editing UI if a second person ever needs to publish",
+  ],
+};
+
+/* ══════════════════════════════════════════════════════════════════════════ */
 
 export const caseStudies: CaseStudy[] = [
   wedfindAi,
@@ -2081,6 +2574,8 @@ export const caseStudies: CaseStudy[] = [
   nur,
   whatsForDinner,
   eventora,
+  bakeryStorefront,
+  furnitureRetail,
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
