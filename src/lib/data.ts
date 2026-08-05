@@ -619,12 +619,12 @@ export const projects: Project[] = [
     confidential: true,
   },
   {
-    title: "Kitchen Physics Sandbox — VR Prototype",
-    tagline: "Grab, heat, and pour interaction spike",
+    title: "Experiment",
+    tagline: "VR interaction testbed for the lesson library",
     problem:
-      "The lesson library needed physical interactions — picking up, tilting, heating — that are easier to get wrong in a lesson than in a sandbox.",
+      "The lesson library needed physical interactions — picking up, tilting, heating — that are easier to get wrong inside a lesson than in a scratch scene.",
     solution:
-      "An interaction prototype built around a stove, lighter, and utensils, with per-object controllers and a reset manager so a state can be tried repeatedly. Not a lesson: a testbed for the grab and manipulation behaviour the teaching scenes depend on.",
+      "An interaction prototype with per-object controllers and a reset manager, so a behaviour can be tried repeatedly from a known state. Not a lesson: a testbed for the grab and manipulation behaviour the teaching scenes depend on.",
     tech: ["Unity", "C#", "Meta Quest 3S", "OpenXR", "XR Interaction Toolkit", "Unity Physics"],
     discipline: "arvr",
     tier: "secondary",
