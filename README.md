@@ -1,9 +1,10 @@
-# Portfolio — Subash Krishnan K
+# Portfolio — Subashkrishnan K
 
 Personal portfolio covering five disciplines: 3D modelling, web, mobile, Windows
 desktop, and AR/VR. Built with Next.js 16 (App Router) and Tailwind v4.
 
-**Live:** https://subashkrishnan.dev
+Deployed on Vercel/Firebase Hosting. Set `NEXT_PUBLIC_SITE_URL` in the host's
+environment so canonical and Open Graph URLs resolve correctly.
 
 ---
 
@@ -79,4 +80,4 @@ case study is publishable before every capture exists.
 
 ## License
 
-All rights reserved. Code and content © Subash Krishnan K.
+All rights reserved. Code and content © Subashkrishnan K.

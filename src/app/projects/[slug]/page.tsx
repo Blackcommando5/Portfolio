@@ -39,7 +39,7 @@ export async function generateMetadata({
 
   if (!study) return {};
 
-  const title = `${study.title} — Case Study | Subash Krishnan K`;
+  const title = `${study.title} — Case Study | Subashkrishnan K`;
 
   return {
     title,

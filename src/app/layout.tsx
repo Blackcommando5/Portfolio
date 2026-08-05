@@ -5,6 +5,7 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { themeInitScript } from "@/lib/theme";
+import { siteUrl } from "@/lib/data";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,13 +21,16 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  /* Resolves the relative canonical / openGraph URLs used on sub-pages. */
-  metadataBase: new URL("https://subashkrishnan.dev"),
-  title: "Subash Krishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
+  /* Resolves the relative canonical / openGraph URLs used on sub-pages.
+     No custom domain yet — set NEXT_PUBLIC_SITE_URL in the host's environment
+     (Vercel or Firebase) and every canonical and OG URL follows it. */
+  metadataBase: new URL(siteUrl),
+  title: "Subashkrishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
   description:
-    "Portfolio of Subash Krishnan K — AI & ML Engineering graduate and multi-discipline developer from Salem, Tamil Nadu, India. Skilled in 3D modeling (Blender), web development (Next.js/React), mobile apps (Flutter/Android), Windows desktop apps (Electron), and AR/VR (Unity/Unreal). Open to full-time opportunities.",
+    "Portfolio of Subashkrishnan K — AI & ML Engineering graduate and multi-discipline developer from Salem, Tamil Nadu, India. Skilled in 3D modeling (Blender), web development (Next.js/React), mobile apps (Flutter/Android), Windows desktop apps (Electron), and AR/VR (Unity/Unreal). Open to full-time opportunities.",
   keywords: [
-    "Subash Krishnan",
+    "Subashkrishnan K",
+    "Subashkrishnan",
     "3D Modeler",
     "Web Developer",
     "App Developer",
@@ -44,21 +48,22 @@ export const metadata: Metadata = {
     "Open to Work",
     "Freshers",
   ],
-  authors: [{ name: "Subash Krishnan K" }],
+  authors: [{ name: "Subashkrishnan K" }],
   openGraph: {
-    title: "Subash Krishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
+    title: "Subashkrishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
     description:
-      "Portfolio of Subash Krishnan K — AI & ML graduate and multi-discipline developer skilled in 3D modeling, web, mobile, desktop, and AR/VR development. Open to full-time opportunities.",
-    url: "https://subashkrishnan.dev",
-    siteName: "Subash Krishnan K Portfolio",
+      "Portfolio of Subashkrishnan K — AI & ML graduate and multi-discipline developer skilled in 3D modeling, web, mobile, desktop, and AR/VR development. Open to full-time opportunities.",
+    /* Relative — resolved against metadataBase, so it follows the deploy URL. */
+    url: "/",
+    siteName: "Subashkrishnan K Portfolio",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Subash Krishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
+    title: "Subashkrishnan K | 3D Modeler, Web, App, Windows & AR/VR Developer",
     description:
-      "Portfolio of Subash Krishnan K — AI & ML graduate and multi-discipline developer skilled in 3D modeling, web, mobile, desktop, and AR/VR development. Open to full-time opportunities.",
+      "Portfolio of Subashkrishnan K — AI & ML graduate and multi-discipline developer skilled in 3D modeling, web, mobile, desktop, and AR/VR development. Open to full-time opportunities.",
   },
   robots: {
     index: true,

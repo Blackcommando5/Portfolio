@@ -3,15 +3,19 @@
 
 export type Discipline = "3d" | "web" | "app" | "windows" | "arvr";
 
+/** Set NEXT_PUBLIC_SITE_URL on the host (Vercel/Firebase) once deployed. */
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") || "http://localhost:3000";
+
 export const siteConfig = {
-  name: "Subash Krishnan K",
+  name: "Subashkrishnan K",
   email: "subashkaran912@gmail.com",
   phone: "+91 9345471612",
   location: "Salem, Tamil Nadu, India",
   links: {
     linkedin: "https://linkedin.com/in/subashkrishnank",
-    github: "https://github.com/subashkrishnank",
-    portfolio: "https://subashkrishnan.dev",
+    github: "https://github.com/Blackcommando5",
+    portfolio: siteUrl,
   },
 };
 
@@ -357,7 +361,6 @@ export const projects: Project[] = [
     tech: ["Unity", "C#", "Meta Quest 3S", "Cinemachine", "ProBuilder", "WebGL", "Visual Effects"],
     discipline: "arvr",
     tier: "featured",
-    // 🔄 MISSING: Quest gameplay recording or WebGL build screenshot
   },
   {
     title: "Number System 2 — VR Number Classification",
@@ -369,7 +372,6 @@ export const projects: Project[] = [
     tech: ["Unity", "C#", "Meta Quest 3S", "XR Interaction Toolkit", "URP"],
     discipline: "arvr",
     tier: "featured",
-    // 🔄 MISSING: Quest gameplay screenshot showing the sorting/combine UI
   },
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -415,19 +417,21 @@ export const projects: Project[] = [
     tier: "secondary",
   },
 
-  /* ── Sashainfinity (confidential — single card, needs permission) ── */
+  /* ── Sashainfinity internship work ──────────────────────────────────────
+     The employer owns these. Lesson titles are listed because they are generic
+     school-syllabus topics; no screenshot, recording, or build is published
+     until Sashainfinity approves it in writing. ────────────────────────── */
   {
     title: "VR Geometry Library — Sashainfinity",
-    tagline: "20 immersive VR math lessons for Meta Quest 3S",
+    tagline: "18 immersive VR maths lessons for Meta Quest 3S",
     problem:
-      "Students struggle with abstract geometry concepts from flat textbook diagrams. Traditional teaching lacks spatial understanding.",
+      "Geometry is taught from flat diagrams, which is exactly the wrong medium for concepts that are fundamentally spatial. A student reading about a tangent to a circle cannot walk around it, and a bisector on paper never moves.",
     solution:
-      "Developed a suite of 20 immersive VR math lessons at Sashainfinity, each following a 5-screen pattern: Welcome → Concept → Interactive Game (5 missions) → Quiz → Score. Covers lines & angles, triangles, circles, quadrilaterals, coordinate geometry, surface area & volume, number systems, and statistics.",
-    tech: ["Unity", "C#", "Meta Quest 3S", "OpenXR", "XR Interaction Toolkit", "URP", "WebGL"],
+      "Built a library of 18 Unity VR lessons on Meta Quest 3S, each following a consistent five-stage structure — Welcome, Concept, an interactive game of five missions, Quiz, then Score — with hand tracking, progressive hints, and randomised replay so a lesson can be repeated without becoming a memory test. Shared interaction and lesson-flow systems are reused across the library rather than rebuilt per topic, which is what made eighteen lessons deliverable in an internship. Also produced a WebGL playable build for browser access. Lessons: Lines and Angles, Basic Geometry, Angle Bisector, Perpendicular Bisector, Equilateral Triangle, Triangle Congruence Theorems, Circle Theorems, Tangent to a Circle, Quadrilateral Explorer, Coordinate Geometry, Angles of Elevation and Depression, Surface Area & Volume Explorer, Mirror Reflection, Projectile Motion, Number Systems, Statistics Data Room, Hand Interaction, and an experimental sandbox.",
+    tech: ["Unity", "C#", "Meta Quest 3S", "OpenXR", "XR Interaction Toolkit", "URP", "Hand Tracking", "WebGL"],
     discipline: "arvr",
-    tier: "secondary",
+    tier: "featured",
     confidential: true,
-    // ⚠️ CONFIDENTIAL — Need Sashainfinity's written permission + approved screenshot
   },
 ];
 

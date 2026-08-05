@@ -4,9 +4,9 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Lock } from "lucide-react";
 import { projects, type Discipline } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Projects | Subash Krishnan K",
+  title: "Projects | Subashkrishnan K",
   description:
-    "Web, mobile, Windows desktop, and AR/VR projects by Subash Krishnan K — with long-form case studies covering architecture, decisions, and trade-offs.",
+    "Web, mobile, Windows desktop, and AR/VR projects by Subashkrishnan K — with long-form case studies covering architecture, decisions, and trade-offs.",
   alternates: { canonical: "/projects" },
 };
 
