@@ -389,6 +389,30 @@ export const projects: Project[] = [
     tier: "secondary",
   },
 
+  /* ── Client work — described by sector only, never by client name ── */
+  {
+    title: "Artisan Bakery — Storefront & Admin",
+    tagline: "Catalogue, customer accounts, and a twelve-section back office",
+    problem:
+      "A specialist food retailer needed more than a brochure site: a browsable catalogue with variants, a way for staff to manage stock and content themselves, somewhere for enquiries to land and be followed up rather than lost in a phone log, and a repeat-customer scheme worth actually running.",
+    solution:
+      "React 19 and Vite single-page app over a sixteen-model domain — products and variants, brands, categories, orders, enquiries, leads with follow-ups and a communications log, loyalty entries, referrals, plus editable site content and FAQs. Twelve admin sections cover the operational surface, from catalogue and orders through to a lead pipeline, loyalty rules, analytics with charts, and a configurable chatbot. The storefront adds a 3D product viewer, faceted filtering, customer accounts with order history and rewards, and WhatsApp enquiry hand-off. Routed with a hash router so it deploys to any static host, and covered by eleven Vitest suites.",
+    tech: ["React 19", "Vite", "React Router", "Prisma", "model-viewer", "Three.js", "Recharts", "Base UI", "Vitest"],
+    discipline: "web",
+    tier: "featured",
+  },
+  {
+    title: "Furniture Retail — Marketing Site",
+    tagline: "Owner-editable content and enquiries that land where the owner already works",
+    problem:
+      "A furniture retailer needed a site that would rank locally and take enquiries, without the two things that usually kill small-business sites: a developer required for every content change, and a contact form whose emails quietly stop arriving.",
+    solution:
+      "Next.js 14 App Router site where every piece of content — business details, catalogue, categories, testimonials — lives in typed data modules the owner can edit without touching components, with categories driving both the URLs and the catalogue filters. Enquiries default to a pre-filled WhatsApp hand-off rather than email, so there is no backend to run and no deliverability to lose, with a Resend path available behind an env var. SEO is treated as a feature: generated sitemap and robots files, a dynamic Open Graph image, and JSON-LD structured data. Pre-launch placeholders are marked in-code so nothing provisional ships by accident.",
+    tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "shadcn/ui", "Framer Motion", "React Hook Form", "Zod", "Resend"],
+    discipline: "web",
+    tier: "secondary",
+  },
+
   /* ── Sashainfinity (confidential — single card, needs permission) ── */
   {
     title: "VR Geometry Library — Sashainfinity",
