@@ -391,10 +391,11 @@ export const projects: Project[] = [
 
   /* ── Client work — described by sector only, never by client name ── */
   {
-    title: "Artisan Bakery — Storefront & Admin",
-    tagline: "Catalogue, customer accounts, and a twelve-section back office",
+    title: "Bakery Ingredients Wholesaler — Storefront & Admin",
+    slug: "bakery-storefront",
+    tagline: "B2B catalogue, customer accounts, and a twelve-section back office",
     problem:
-      "A specialist food retailer needed more than a brochure site: a browsable catalogue with variants, a way for staff to manage stock and content themselves, somewhere for enquiries to land and be followed up rather than lost in a phone log, and a repeat-customer scheme worth actually running.",
+      "A wholesale distributor of baking ingredients selling to bakeries, cafes, hotels, and manufacturers needed more than a brochure site: a browsable catalogue with variants, a way for staff to manage stock and content themselves, somewhere for trade enquiries to land and be followed up rather than lost in a phone log, and a repeat-customer scheme worth actually running.",
     solution:
       "React 19 and Vite single-page app over a sixteen-model domain — products and variants, brands, categories, orders, enquiries, leads with follow-ups and a communications log, loyalty entries, referrals, plus editable site content and FAQs. Twelve admin sections cover the operational surface, from catalogue and orders through to a lead pipeline, loyalty rules, analytics with charts, and a configurable chatbot. The storefront adds a 3D product viewer, faceted filtering, customer accounts with order history and rewards, and WhatsApp enquiry hand-off. Routed with a hash router so it deploys to any static host, and covered by eleven Vitest suites.",
     tech: ["React 19", "Vite", "React Router", "Prisma", "model-viewer", "Three.js", "Recharts", "Base UI", "Vitest"],
@@ -403,6 +404,7 @@ export const projects: Project[] = [
   },
   {
     title: "Furniture Retail — Marketing Site",
+    slug: "furniture-retail",
     tagline: "Owner-editable content and enquiries that land where the owner already works",
     problem:
       "A furniture retailer needed a site that would rank locally and take enquiries, without the two things that usually kill small-business sites: a developer required for every content change, and a contact form whose emails quietly stop arriving.",
