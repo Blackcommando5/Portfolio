@@ -377,14 +377,16 @@ export const projects: Project[] = [
      ══════════════════════════════════════════════════════════════════════ */
 
   {
-    title: "Eventora — Event Registration SaaS",
-    tagline: "SaaS platform for event registration and management",
-    problem: "Event organizers needed streamlined registration and attendee management.",
-    solution: "Next.js 16 + Prisma + PostgreSQL SaaS with event creation, registration workflows, and attendee management.",
-    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
+    title: "Eventora — Event Ticketing Platform",
+    slug: "eventora",
+    tagline: "Discovery and ticket booking, built from the transaction outward",
+    problem:
+      "A ticketing system looks like a catalogue with a checkout attached, but it is a small financial system with a hard concurrency constraint in the middle. The last seat can only be sold once, a ticket sold at last week's price must stay sold at that price, and a total assembled on the client is a total a client can edit.",
+    solution:
+      "Next.js 16 platform over 14 related Prisma models on PostgreSQL. Money is stored as integers, each booking line snapshots its purchase price so a later price change cannot rewrite an old invoice, and subtotal, discount, tiered fee, and 18% GST are derived server-side and stored itemised. Booking runs as one transaction — booking, line items, seat decrements, one scannable pass per attendee, and a payment record — while cancellation compensates rather than deletes, reversing earned reward points. Repository and service layers sit behind a versioned API with Zod at the edge.",
+    tech: ["Next.js 16", "React 19", "TypeScript", "Prisma 7", "PostgreSQL", "Zod", "Tailwind v4"],
     discipline: "web",
     tier: "secondary",
-    // 🔄 MISSING: Eventora landing page screenshot
   },
 
   /* ── Sashainfinity (confidential — single card, needs permission) ── */
