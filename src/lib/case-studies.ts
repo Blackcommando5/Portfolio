@@ -1550,6 +1550,268 @@ const nur: CaseStudy = {
 
 /* ══════════════════════════════════════════════════════════════════════════ */
 
+const whatsForDinner: CaseStudy = {
+  slug: "whats-for-dinner",
+  title: "What's For Dinner — AI Meal Planner",
+  tagline:
+    "Photograph your shelf, get a meal you can actually cook — then find restaurants whose reviewers mention that dish by name.",
+  role: "Solo — Flutter app, LLM integration, on-device vision, Places ranking heuristic",
+  timeline: "2025 — built for the Quadrabay hackathon",
+  status: "shipped",
+  links: {
+    github: "https://github.com/Blackcommando5/Whats-for-Dinner",
+  },
+
+  summary:
+    "The daily question is not what would I like to eat, it is what can I make with what is already in the kitchen. This app starts from the pantry: type ingredients or photograph the shelf and let on-device image labelling name them, then ask an LLM for a meal built from exactly those items. The idea I still like is what happens after the suggestion — instead of dropping a generic map of nearby shops, it queries Places for restaurants around you, reads their reviews, and ranks them by how often the suggested dish is actually mentioned in positive ones. Reviews become a proxy for whether a place genuinely does that dish.",
+
+  metrics: [
+    { value: "Claude 3", label: "Sonnet via OpenRouter for meal suggestions" },
+    { value: "on-device", label: "ML Kit image labelling, no image leaves the phone" },
+    { value: "≥ 0.7", label: "confidence floor for accepting a detected ingredient" },
+    { value: "10 km", label: "Places search radius for nearby restaurants" },
+    { value: "≥ 4★", label: "only positive reviews count toward the dish score" },
+    { value: "9", label: "screens across pantry, groceries, planner and discovery" },
+  ],
+
+  problem: {
+    heading: "The problem",
+    body: "Deciding dinner is a search problem with the constraints back to front. Recipe apps start from a dish and hand you a shopping list; the actual question starts from a shelf of half-used ingredients and asks what comes out of it.",
+    bullets: [
+      "Planning from recipes rather than from stock is what produces both over-buying and food waste.",
+      "Typing an entire pantry into an app is enough friction that nobody does it twice.",
+      "Once you know what you want to eat, deciding whether to cook it or go out is a second, unsupported decision.",
+      "A list of nearby restaurants does not tell you which of them is actually good at the specific dish you want.",
+    ],
+  },
+
+  approach: [
+    {
+      heading: "Start from the pantry, not the recipe",
+      body: "The pantry is the app's primary object. Ingredients go in with a quantity and a unit, and the meal suggestion is generated from that list rather than from a catalogue of recipes — so the answer is always something makeable right now. It inverts the usual flow, which is the entire reason the app exists.",
+    },
+    {
+      heading: "Let the camera do the data entry",
+      body: "Typing a pantry is the step that kills adoption, so the pantry screen has a camera in its header. A photograph runs through on-device image labelling and any label confident enough becomes a candidate ingredient. Running it on-device matters twice over: photographs of someone's kitchen never leave the phone, and it works with no connection. The confidence floor is deliberately high — a wrong ingredient corrupts the suggestion that follows, so silence is better than a guess.",
+    },
+    {
+      heading: "Rank restaurants by what reviewers actually say",
+      body: "This is the part I would show first. Having produced a dish, the app finds restaurants within ten kilometres, then for each one pulls its reviews and counts how many times the dish appears in reviews rated four stars or better, using that count to order the results. It is a cheap, surprisingly effective proxy: a place with six happy reviews mentioning the dish by name is a better bet for that dish than a higher-rated place nobody mentions it at. Ratings tell you whether a restaurant is good; review text tells you whether it is good at this.",
+    },
+    {
+      heading: "Read the recipe out loud",
+      body: "Cooking is the one context where a screen is genuinely the wrong interface — hands are wet, occupied, or covered in flour. The suggestion can be spoken through text to speech, which is a small feature that fits the moment of use better than anything visual would.",
+    },
+    {
+      heading: "Hand navigation off rather than embedding a map",
+      body: "Choosing a restaurant ends in walking or driving there, and no in-app map competes with the real Maps app for that. So the app deep-links out with the destination rather than embedding a map view — less surface to build, and the user lands in the tool that already has their traffic, saved places, and preferred transport mode.",
+    },
+  ],
+
+  flows: [
+    {
+      actor: "Deciding what to cook",
+      steps: [
+        { label: "Stock the pantry", detail: "Type an ingredient with quantity and unit, or photograph the shelf" },
+        { label: "Labels become ingredients", detail: "On-device labelling proposes items above the confidence floor" },
+        { label: "Ask for a meal", detail: "The pantry list is sent to Claude 3 Sonnet through OpenRouter" },
+        { label: "Listen or read", detail: "The suggestion renders on screen and can be spoken aloud" },
+        { label: "Keep it", detail: "Suggestions are saved to a history screen so a good one is not lost" },
+      ],
+    },
+    {
+      actor: "Deciding to eat out instead",
+      steps: [
+        { label: "Locate", detail: "Full permission ladder — service enabled, permission checked, then requested" },
+        { label: "Find restaurants", detail: "Places nearby search within a 10 km radius" },
+        { label: "Read the reviews", detail: "Each result's reviews are fetched and scanned for the dish" },
+        { label: "Score and sort", detail: "One point per mention in a review rated four stars or higher" },
+        { label: "Go", detail: "Deep-link out to the Maps app for directions" },
+      ],
+    },
+  ],
+
+  architecture: `  ┌──────────────── Flutter app ─────────────────┐
+  │  Pantry ──┬─ typed entry                     │
+  │           └─ camera ─► ML Kit labeller       │
+  │                        (on-device, ≥0.7)     │
+  │             │                                │
+  │             ▼                                │
+  │  Meal suggestion ──► OpenRouter              │
+  │             │         claude-3-sonnet        │
+  │             ├──► flutter_tts (read aloud)    │
+  │             └──► history                     │
+  │             │                                │
+  │             ▼                                │
+  │  Nearby ─► Places nearbysearch (10 km)       │
+  │             └─ per result: place details     │
+  │                 └─ count dish mentions in    │
+  │                    reviews rated ≥ 4★        │
+  │                     └─ sort ─► launchUrl     │
+  │                                 (Maps app)   │
+  └──────────────────────┬───────────────────────┘
+                         ▼
+            Firebase Auth · Firestore · Storage`,
+
+  architectureNotes: [
+    "Image labelling runs entirely on the device — kitchen photographs are never uploaded.",
+    "The dish score only counts reviews rated four stars or higher, so complaints cannot promote a restaurant.",
+    "Nearby discovery costs one search call plus one details call per result, which is the main thing I would restructure.",
+    "Navigation is delegated to the Maps app rather than rendered in-app.",
+    "Two different configuration mechanisms are in play — a compile-time constant for the LLM key and dotenv for the Places key.",
+  ],
+
+  decisions: [
+    {
+      decision: "Score restaurants by dish mentions in positive reviews",
+      why: "A star rating answers whether a restaurant is good in general, which is not the question. Counting how often the specific dish appears in reviews people left happy is a far closer proxy for whether that dish is worth ordering there, and it needs no dataset beyond what Places already returns.",
+      tradeoff: "It is a text heuristic wearing a ranking's clothes. Matching is substring-based rather than word-boundary — despite a comment claiming otherwise — so short dish names produce false positives, and a place with many reviews outscores an equally good place with few. Popularity is not the same as suitability, and the score does not normalise for review volume.",
+    },
+    {
+      decision: "Fetch reviews for every nearby result",
+      why: "The score cannot be computed from the nearby search response, which does not include review text. Getting it required a details call per candidate, and for a hackathon build correctness of the idea mattered more than the call count.",
+      tradeoff: "It is a classic N+1 against a metered API: one search plus one request per result, all sequential, all billable, on every single search. It is slow enough to feel and expensive enough to matter beyond a demo. The right shape is to score a handful of top candidates lazily, cache by place id, and parallelise what remains.",
+    },
+    {
+      decision: "Run ingredient recognition on-device",
+      why: "The input is a photograph of someone's kitchen. Keeping it local means the most personal data the app touches never leaves the phone, and recognition still works with no connection — which is exactly when someone is stood in front of their own cupboard.",
+      tradeoff: "A generic on-device labeller is far weaker than a hosted vision model at telling one vegetable from another, so the confidence floor has to be high and much of a photograph is discarded. The feature is a shortcut for obvious items, not a replacement for typing.",
+    },
+    {
+      decision: "Set the confidence floor above the labeller's own threshold",
+      why: "Everything downstream is built on the ingredient list, so a hallucinated ingredient does not degrade the result, it invalidates it. Rejecting uncertain labels costs a little typing; accepting them costs the whole suggestion.",
+      tradeoff: "Two thresholds now exist in one path — the labeller is configured with one and the results are filtered by a stricter one — which makes the effective behaviour non-obvious to read. One of them should own the decision.",
+    },
+  ],
+
+  stack: [
+    {
+      layer: "App",
+      items: ["Flutter", "Dart 3", "Material", "marquee", "flutter_launcher_icons"],
+    },
+    {
+      layer: "AI",
+      items: ["OpenRouter", "anthropic/claude-3-sonnet", "500-token cap", "pantry-conditioned prompt"],
+    },
+    {
+      layer: "On-device ML",
+      items: ["google_mlkit_image_labeling", "image_picker", "image", "confidence gating"],
+    },
+    {
+      layer: "Location",
+      items: ["Places nearby search", "Places details for reviews", "geolocator", "url_launcher deep links"],
+    },
+    {
+      layer: "Backend",
+      items: ["Firebase Auth", "Cloud Firestore", "Cloud Storage"],
+    },
+    {
+      layer: "Device",
+      items: ["flutter_tts", "permission_handler", "flutter_dotenv"],
+    },
+  ],
+
+  screens: [
+    {
+      group: "Accounts",
+      access: "public",
+      shots: [
+        {
+          route: "screens/login_screen.dart",
+          label: "Sign in",
+          detail: "Firebase email and password, with a password reset path.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-2.webp",
+        },
+        {
+          route: "screens/register_screen.dart",
+          label: "Create account",
+          detail: "Registration with confirmation and a stated minimum password length.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-1.webp",
+        },
+      ],
+    },
+    {
+      group: "Kitchen",
+      access: "authenticated",
+      shots: [
+        {
+          route: "screens/home_screen.dart",
+          label: "Home",
+          detail: "The four things the app does — pantry, grocery list, meal suggestions, weekly planner — as the whole navigation model.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-3.webp",
+        },
+        {
+          route: "screens/pantry_screen.dart",
+          label: "Pantry",
+          detail: "Ingredient, quantity, and unit — plus the camera in the header, which is the on-device labelling entry point and the reason stocking the pantry is not pure typing.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-4.webp",
+        },
+        {
+          route: "screens/grocery_screen.dart",
+          label: "Grocery list",
+          detail: "What the pantry is missing, with a clear-all for after a shop.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-5.webp",
+        },
+        {
+          route: "screens/meal_suggestion_screen.dart",
+          label: "Meal suggestions",
+          detail: "Reads the pantry and asks for a meal. The header icons are the rest of the flow — planner, nearby restaurants, filters, and saved suggestion history.",
+          aspect: "portrait",
+          src: "/projects/whats-for-dinner/shot-6.webp",
+        },
+      ],
+    },
+  ],
+
+  engineering: [
+    {
+      heading: "Two ways to configure one app",
+      body: "The Places key is read through dotenv while the LLM key is read as a compile-time constant, and that difference has teeth: a constant pulled from the build environment resolves to an empty string when the define is absent, so a build made without the flag sends an empty bearer token and every suggestion fails with an authorization error rather than a missing-configuration error. Both keys should come through one mechanism, and a missing key should fail loudly at startup instead of surfacing as a confusing failure at the point of use.",
+    },
+    {
+      heading: "Where the shortcuts show",
+      body: "This was built to a hackathon deadline and the seams are visible in specific places rather than generally. The suggestion screen has grown to roughly eight hundred lines and holds UI, API calls, speech, and state together. The model and widget files that would have absorbed some of that were created and left empty, so screens pass raw maps around instead of typed objects. And the nearby-restaurant flow issues a details request per result on the main path, which is the difference between a demo that works and a feature that scales.",
+      bullets: [
+        "Split the suggestion screen; give the response a typed model rather than a map.",
+        "Delete or fill the two empty placeholder files so the structure stops implying a layer that is not there.",
+        "Match dish names on word boundaries, and normalise the score by review count.",
+        "Cache review scores by place id — the same restaurants recur on every nearby search.",
+      ],
+    },
+    {
+      heading: "What holds up",
+      body: "The pantry-first model, the decision to keep vision on-device, and the review-mention ranking are all things I would build the same way again. The ranking in particular came out of asking what signal already exists that nobody uses, which is a better instinct than reaching for a bigger model — and it is the piece of this project that would still be interesting at ten times the scale, once the call pattern behind it is fixed.",
+    },
+  ],
+
+  outcome: {
+    heading: "Outcome",
+    body: "A working Flutter app that answers dinner from the contents of a kitchen rather than a recipe index: photograph the shelf, get a meal you can actually make, hear it read aloud while cooking, or find the nearby restaurant whose reviewers keep mentioning that exact dish. Built to a hackathon deadline, so the interesting parts and the rough parts sit close together — and I would rather point at both than describe it as finished.",
+    bullets: [
+      "Inverted the usual flow — the pantry is the input and the meal is the output.",
+      "On-device ingredient recognition, so kitchen photographs never leave the phone.",
+      "A ranking heuristic built from review text, using a signal already present in the API response.",
+      "Text to speech chosen for the one context where a screen is genuinely the wrong interface.",
+    ],
+  },
+
+  roadmap: [
+    "One configuration mechanism, validated at startup",
+    "Score only top candidates, cached by place id and fetched in parallel",
+    "Word-boundary dish matching, normalised for review volume",
+    "Typed models for suggestions and pantry items",
+    "Split the suggestion screen into presentation and service layers",
+    "Expiry dates on pantry items, so the planner can prioritise what will spoil",
+  ],
+};
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+
 export const caseStudies: CaseStudy[] = [
   wedfindAi,
   meetingAssistant,
@@ -1557,6 +1819,7 @@ export const caseStudies: CaseStudy[] = [
   aePromptBridge,
   figmaToAe,
   nur,
+  whatsForDinner,
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
