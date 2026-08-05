@@ -1812,6 +1812,224 @@ const whatsForDinner: CaseStudy = {
 
 /* ══════════════════════════════════════════════════════════════════════════ */
 
+const eventora: CaseStudy = {
+  slug: "eventora",
+  title: "Eventora — Event Ticketing Platform",
+  tagline:
+    "Selling a ticket is a money-and-concurrency problem before it is a UI problem — so the domain model and the transaction came first.",
+  role: "Solo — domain model, transactional booking pipeline, layered API",
+  timeline: "2026",
+  status: "in-development",
+  proprietary: true,
+
+  summary:
+    "Eventora is an event discovery and ticket-booking platform: browse events by category, venue, and date, pick ticket tiers, apply a coupon, and receive a separate scannable pass for every attendee. The interesting work is underneath the screens. Overselling the last seat, letting a later price change rewrite an old invoice, or producing a total a client could tamper with are all failures you cannot patch in the UI, so the schema and the write path were designed first — fourteen related models, money as integers, and a booking that either happens completely or not at all. The identity layer, by contrast, is still a stub, and I would rather say so than let the data model imply the whole thing is finished.",
+
+  metrics: [
+    { value: "14", label: "related Prisma models across the domain" },
+    { value: "1", label: "transaction per booking — seats, tickets, payment" },
+    { value: "integers", label: "all money stored in minor units, never floats" },
+    { value: "1 : 1", label: "ticket row per attendee, each with its own status" },
+    { value: "18%", label: "GST and a tiered fee, computed server-side" },
+    { value: "9", label: "versioned REST endpoints under /api/v1" },
+  ],
+
+  problem: {
+    heading: "The problem",
+    body: "A ticketing system looks like a catalogue with a checkout attached. It is really a small financial system with a hard concurrency constraint in the middle: the last seat can only be sold once, and every rupee taken has to be reconstructable months later.",
+    bullets: [
+      "Two people paying for the last seat at the same moment must not both succeed.",
+      "A ticket sold at last week's price has to stay sold at that price, whatever the organiser changes afterwards.",
+      "A total assembled on the client is a total a client can edit — pricing and tax have to be computed server-side.",
+      "Entry control is per person, not per purchase: one booking of four seats needs four independently scannable passes.",
+      "Tax and platform fees have to survive an audit, which means storing them as separate figures rather than one opaque total.",
+    ],
+  },
+
+  approach: [
+    {
+      heading: "Model the domain, not the pages",
+      body: "Venue, Organizer, Category, Performer, and ScheduleItem are all separate entities that Event points at, rather than columns denormalised into one events table. It costs joins, but it is what makes browsing by city, filtering by category, and showing a lineup possible without reshaping data at read time — and it means an organiser's rating or a venue's coordinates live in exactly one place.",
+    },
+    {
+      heading: "One ticket row per attendee",
+      body: "A booking of four seats creates four ticket rows, each with its own attendee name, email, code, and status moving from valid to scanned. That is the shape gate scanning actually needs: a door can burn one person's pass without touching the other three, and a partially-used booking is a normal state rather than an edge case. Modelling tickets per booking instead would have made this impossible without a second table later.",
+    },
+    {
+      heading: "Keep money in integers and snapshot the price",
+      body: "Every amount is an integer in minor units, so no total ever passes through a float. Each booking line also stores the price it was bought at rather than pointing at the live ticket-type price, which means an organiser raising prices next week cannot silently rewrite what last week's customer owed. Historical invoices stay true by construction rather than by convention.",
+    },
+    {
+      heading: "Compute the invoice on the server, and store it itemised",
+      body: "Subtotal, coupon discount, platform fee, GST, and the final total are all derived server-side from the ticket types actually being bought — the client sends quantities, never prices. Each figure is then persisted as its own column, so a booking is a reconstructable invoice rather than a number. The fee is tiered by order size and GST is applied to the post-discount amount, which is the order tax has to be applied in.",
+    },
+    {
+      heading: "Make the booking atomic",
+      body: "Creating a booking writes the booking, its line items, a decrement against each ticket type's remaining seats, a matching decrement on the event's aggregate count, one ticket row per attendee, and a payment record — all inside a single database transaction. Any failure rolls the whole thing back, so there is no state where seats have been taken but no ticket exists, or a payment is recorded against a booking that was never created.",
+    },
+    {
+      heading: "Cancel by compensating, not by deleting",
+      body: "Cancellation runs as its own transaction that puts seats back on both counters, moves the booking, its tickets, and its payment to their cancelled states, and reverses the reward points the purchase earned. Nothing is deleted — the record stays and its status changes. Reversing the points is the part that is easy to forget, and forgetting it is how a user farms rewards by booking and cancelling.",
+    },
+    {
+      heading: "Layer the server so the rules have somewhere to live",
+      body: "Repositories own database access, services own the rules — availability, pricing, tax — and versioned route handlers do nothing but validate input with a schema and translate results into a consistent response envelope. It means the pricing logic is in one readable place rather than smeared across route files, and the API is versioned from the first commit rather than after the first breaking change.",
+    },
+  ],
+
+  flows: [
+    {
+      actor: "Booking a ticket",
+      steps: [
+        { label: "Discover", detail: "Events by category, venue city, date, and a featured flag" },
+        { label: "Open an event", detail: "Lineup, schedule, highlights, ticket tiers with remaining seats" },
+        { label: "Choose tiers", detail: "Quantities per ticket type; the client never sends a price" },
+        { label: "Apply a coupon", detail: "Validated server-side against expiry, active flag, and a maximum discount cap" },
+        { label: "Confirm", detail: "One transaction: booking, items, seat decrements, a pass per attendee, payment" },
+        { label: "Get passes", detail: "A shareable booking reference, and a separate scannable pass per attendee" },
+      ],
+    },
+    {
+      actor: "At the door",
+      steps: [
+        { label: "Present a pass", detail: "Each attendee has their own code, independent of the others" },
+        { label: "Scan", detail: "The ticket moves from valid to scanned, so it cannot be reused" },
+        { label: "Partial entry is fine", detail: "Three of four attendees arriving is an ordinary state, not an error" },
+      ],
+    },
+  ],
+
+  architecture: `  ┌─────────── Next.js app (App Router) ───────────┐
+  │  /                discovery, featured, search  │
+  │  /events/[id]      lineup · schedule · tiers   │
+  │  /events/[id]/book quantities · coupon         │
+  │  /tickets/[ref]    passes, one per attendee    │
+  │  /dashboard        bookings and profile        │
+  └───────────────────────┬────────────────────────┘
+                          │  /api/v1/*  (zod at the edge)
+                          ▼
+  ┌──────────────── server layers ─────────────────┐
+  │  services      availability · pricing · GST    │
+  │      │         coupon rules · rewards          │
+  │      ▼                                         │
+  │  repositories  all DB access, transactions     │
+  └───────────────────────┬────────────────────────┘
+                          ▼
+  ┌──────── PostgreSQL via Prisma driver adapter ──┐
+  │  Event ─► Venue · Organizer · Category         │
+  │        ─► Performer · ScheduleItem             │
+  │        ─► TicketType ──┐                       │
+  │  Booking ─► BookingItem┘─► Ticket (per person) │
+  │          ─► Payment · Coupon                   │
+  │  User ─► Booking · Notification                │
+  └────────────────────────────────────────────────┘`,
+
+  architectureNotes: [
+    "Booking and cancellation each run as a single transaction, so seat counts and tickets can never disagree.",
+    "Remaining seats are tracked on both the ticket type and the event, and both are adjusted inside that transaction.",
+    "A booking carries two identifiers: an internal key and a separate human-facing reference used in URLs.",
+    "Prisma 7 connects through the pg driver adapter, so the connection string lives in application code rather than the schema.",
+    "The client is never trusted with a price — it sends quantities and a coupon code, and the server derives the rest.",
+  ],
+
+  decisions: [
+    {
+      decision: "Track remaining seats on both the ticket type and the event",
+      why: "A discovery page needs to say sold out for hundreds of events at once. Reading a per-event counter is one column; deriving it means aggregating every ticket type on every card.",
+      tradeoff: "Two counters for one truth. Both are adjusted inside the booking transaction so they cannot drift under normal use, but any future write path that forgets the aggregate will desynchronise it silently — and a silently wrong sold-out badge is worse than a slow one. A periodic reconciliation job, or deriving the aggregate in a view, would remove the class of bug entirely.",
+    },
+    {
+      decision: "Create one ticket row per attendee rather than per booking",
+      why: "Entry is per person. Individual rows give each attendee their own code and their own valid-to-scanned lifecycle, which makes single-ticket scanning and partial attendance ordinary rather than special-cased.",
+      tradeoff: "Row count multiplies with group size, and there is still no seat-level model — every pass is general admission. Reserved seating would need a seat entity these rows would then have to reference.",
+    },
+    {
+      decision: "Snapshot the purchase price on each booking line",
+      why: "An invoice has to stay true after the catalogue changes. Referencing the live ticket-type price would let an organiser's price rise retroactively alter what a past customer appears to have paid.",
+      tradeoff: "The price now exists in two places, and a genuine pricing correction cannot be propagated to historical bookings even when that is what you want. Immutability is the right default here, but it is a default, not a free win.",
+    },
+    {
+      decision: "Soft-delete events, organisers, and users — but never bookings, tickets, or payments",
+      why: "Catalogue entities need to disappear from browsing without orphaning the bookings that reference them. Financial and entry records are the opposite: they have to remain exactly as written.",
+      tradeoff: "Every catalogue read now has to filter deleted rows, and one query that forgets to will surface a withdrawn event. It also means a deleted event still has live bookings pointing at it, so deletion is a visibility change rather than a real removal — which needs to be understood by anyone writing a new query.",
+    },
+    {
+      decision: "Put pricing and tax in a service layer rather than in route handlers",
+      why: "The fee tier, the discount cap, and the order in which GST applies are business rules that need one home. Routes stay thin — validate, delegate, respond — and the rules are readable in one file instead of inferred from three.",
+      tradeoff: "More indirection than a small app needs, and the layering is only enforced by convention: nothing stops a future route from reaching for the database directly and bypassing the rules. A repository-only database import boundary would make that structural.",
+    },
+  ],
+
+  stack: [
+    {
+      layer: "App",
+      items: ["Next.js 16", "React 19", "TypeScript", "App Router", "Tailwind v4", "lucide-react"],
+    },
+    {
+      layer: "API",
+      items: ["Versioned route handlers", "Zod validation", "shared response envelope", "typed error codes"],
+    },
+    {
+      layer: "Server",
+      items: ["Repository layer", "service layer", "Prisma transactions", "server-side pricing and tax"],
+    },
+    {
+      layer: "Data",
+      items: ["PostgreSQL", "Prisma 7", "@prisma/adapter-pg driver adapter", "pg pool", "seed script"],
+    },
+    {
+      layer: "Domain",
+      items: ["Events", "venues", "organisers", "categories", "ticket types", "coupons", "bookings", "per-attendee tickets", "payments", "reward points", "notifications"],
+    },
+  ],
+
+  engineering: [
+    {
+      heading: "The race the transaction does not close",
+      body: "Availability is checked and then decremented inside a transaction, which is the right instinct but not sufficient on its own. Under the default isolation level two concurrent bookings can both read the same last seat as available, and because the decrement itself is atomic they will both succeed — leaving remaining seats negative. A transaction guarantees all-or-nothing, not serialisability. Closing it properly means making the write conditional on availability so the update matches zero rows when the seat is gone, backing that with a check constraint so the column can never go negative, or raising the isolation level and retrying on conflict. This is the first thing I would fix, and it is a good illustration that wrapping code in a transaction is not the same as protecting an invariant.",
+    },
+    {
+      heading: "Known limitation — there is no authentication",
+      body: "The API identifies the caller by reading an email from a request header, then a query parameter, then falling back to a hardcoded address. That is a placeholder standing in for a session, and its consequence is direct: passing an email to the bookings or profile endpoint returns that person's bookings. There is a password-hash column in the schema and no hashing library in the project, which is an honest signal of where this got to. Nothing about the booking pipeline changes when real sessions arrive — the identity has to come from a verified session instead of a header, and every read has to be scoped to it — but until that exists this is a demonstration of the domain, not something to point at the internet.",
+      bullets: [
+        "Replace the header and query fallbacks with a verified session on every request.",
+        "Scope every booking and ticket read to the authenticated user rather than a supplied email.",
+        "Add role checks so organiser and admin surfaces are enforced server-side, not by which page is rendered.",
+      ],
+    },
+    {
+      heading: "Payments and passes are placeholders",
+      body: "There is no payment gateway. A booking is marked paid and a successful payment row is written as part of the same transaction, which is a deliberate stand-in so the rest of the pipeline can be exercised end to end. The payment model is already the right shape for a real provider — amount, method, transaction reference, status — so integrating one is filling that in and moving the status transition behind a webhook rather than restructuring anything. Ticket codes are similarly provisional: each is derived from the booking reference plus an index, so anyone holding one booking reference can construct every pass code belonging to it. A real pass needs a random or signed value that cannot be guessed from a neighbouring one.",
+    },
+    {
+      heading: "A modelling gap worth naming",
+      body: "The user role enum includes an organiser role while organisers are also their own entity with their own contact details — and there is no relation between the two. As it stands an organiser-role user cannot be linked to the organiser record they are supposed to manage, so any organiser-facing feature has nothing to authorise against. Whether that becomes a relation on the organiser or a rethink of roles is a decision the first organiser screen would force.",
+    },
+  ],
+
+  outcome: {
+    heading: "Outcome",
+    body: "A ticketing platform whose foundations are the part I would defend: fourteen related models, money kept in integers, purchase prices snapshotted so old invoices stay true, an itemised tax breakdown computed server-side, and both booking and cancellation implemented as single transactions with the cancellation reversing earned rewards. It is also unfinished in a specific and stateable way — identity is a stub, payments are simulated, and the seat-availability check needs stronger isolation than a transaction alone provides. Those three things are the work, not a rewrite.",
+    bullets: [
+      "Booking writes seats, per-attendee passes, and payment atomically, or writes nothing.",
+      "Cancellation compensates rather than deletes, including reversing reward points.",
+      "Pricing, discount caps, and GST are derived server-side and stored itemised for reconstruction.",
+      "Auth, real payments, and the oversell race are named as open work rather than implied complete.",
+    ],
+  },
+
+  roadmap: [
+    "Real sessions, with every read scoped to the authenticated user",
+    "Conditional seat updates plus a non-negative check constraint to close the oversell race",
+    "A payment provider, with status moving on a verified webhook",
+    "Unguessable, signed ticket codes and a scanning endpoint that burns them",
+    "Relate organiser users to the organiser records they manage",
+    "Reconcile the event-level seat aggregate, or derive it instead of storing it",
+  ],
+};
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+
 export const caseStudies: CaseStudy[] = [
   wedfindAi,
   meetingAssistant,
@@ -1820,6 +2038,7 @@ export const caseStudies: CaseStudy[] = [
   figmaToAe,
   nur,
   whatsForDinner,
+  eventora,
 ];
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {
