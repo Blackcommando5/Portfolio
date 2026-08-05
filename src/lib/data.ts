@@ -333,13 +333,15 @@ export const projects: Project[] = [
     tier: "featured",
   },
   {
-    title: "Whats for Dinner — AI Meal Planner",
-    tagline: "AI-powered meal suggestions with grocery management",
+    title: "What's For Dinner — AI Meal Planner",
+    slug: "whats-for-dinner",
+    tagline: "Photograph your shelf, get a meal you can actually cook",
     problem:
-      "People struggle daily with deciding what to cook and end up over-buying groceries or wasting food.",
+      "Recipe apps have the constraints back to front — they start from a dish and hand you a shopping list, when the real question starts from a shelf of half-used ingredients. Planning from recipes rather than from stock is what produces both over-buying and waste. And once you know what you want, a list of nearby restaurants still won't tell you which is actually good at that dish.",
     solution:
-      "Flutter app with AI meal suggestions, grocery list management, pantry tracking, weekly meal planner, nearby shop finder (Google Maps), AI image labeling for food items, text-to-speech, and Firebase backend.",
-    tech: ["Flutter", "Firebase", "Google Maps", "ML Kit", "Text-to-Speech", "Geolocator"],
+      "Flutter app built pantry-first: type ingredients or photograph the shelf and let on-device ML Kit labelling name them, then ask Claude 3 Sonnet via OpenRouter for a meal made from exactly those items, optionally read aloud through TTS for hands-free cooking. The part I'd show first is discovery — it queries Places for restaurants within 10 km, pulls each one's reviews, and ranks them by how often the suggested dish is mentioned in reviews rated 4★ or better. Star ratings say whether a restaurant is good; review text says whether it's good at *this*.",
+    tech: ["Flutter", "Claude 3 Sonnet", "OpenRouter", "ML Kit (on-device)", "Places API", "Geolocator", "Flutter TTS", "Firebase"],
+    github: "https://github.com/Blackcommando5/Whats-for-Dinner",
     discipline: "app",
     tier: "featured",
     badge: { label: "🏆 Hackathon Project — Quadrabay", variant: "green" },
