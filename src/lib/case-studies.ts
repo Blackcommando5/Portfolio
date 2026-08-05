@@ -1823,7 +1823,7 @@ const eventora: CaseStudy = {
   proprietary: true,
 
   summary:
-    "Eventora is an event discovery and ticket-booking platform: browse events by category, venue, and date, pick ticket tiers, apply a coupon, and receive a separate scannable pass for every attendee. The interesting work is underneath the screens. Overselling the last seat, letting a later price change rewrite an old invoice, or producing a total a client could tamper with are all failures you cannot patch in the UI, so the schema and the write path were designed first — fourteen related models, money as integers, and a booking that either happens completely or not at all. The identity layer, by contrast, is still a stub, and I would rather say so than let the data model imply the whole thing is finished.",
+    "Eventora is an event discovery and ticket-booking platform: browse events by category, venue, and date, pick ticket tiers, apply a coupon, and get a pass to show at the gate. The work I would put forward is underneath. Overselling the last seat, letting a later price change rewrite an old invoice, or trusting a total assembled on the client are failures you cannot patch in the UI, so the schema and the write path were built first — fourteen related models, money as integers, and a booking that either happens completely or not at all. Being straight about where it got to: that backend is finished and unused. Every screen still renders from a hardcoded client-side context, there is no authentication, and payments are simulated. The data layer is the achievement here; wiring the product to it is the remaining work.",
 
   metrics: [
     { value: "14", label: "related Prisma models across the domain" },
@@ -1983,7 +1983,49 @@ const eventora: CaseStudy = {
     },
   ],
 
+  screens: [
+    {
+      group: "Discovery and booking",
+      access: "public",
+      shots: [
+        {
+          route: "/",
+          label: "Discovery",
+          detail: "Events by category with a featured rail. Rendered from the client-side context rather than the events API.",
+          src: "/projects/eventora/discovery.webp",
+        },
+        {
+          route: "/events/[id]",
+          label: "Event detail",
+          detail: "The screen that shows the domain model working: seats remaining, four ticket tiers with their own prices and steppers, a promo-code field, and a live breakdown of subtotal, booking fee, GST at 18%, and total. This is the shape the schema and pricing service were built for — although here the arithmetic runs client-side.",
+          src: "/projects/eventora/event-detail.webp",
+        },
+        {
+          route: "/tickets/[bookingId]",
+          label: "Entry pass",
+          detail: "The confirmed pass, with the booking reference as its barcode. Worth noting against the schema: the database creates one ticket row per attendee, but this screen renders a single pass carrying a quantity — so the per-attendee model is not yet reflected in the UI.",
+          src: "/projects/eventora/tickets.webp",
+        },
+        {
+          route: "/dashboard",
+          label: "Dashboard",
+          detail: "Bookings, saved events, and profile for the current user — where a real session will need to replace the placeholder identity.",
+          src: "/projects/eventora/dashboard.webp",
+        },
+      ],
+    },
+  ],
+
   engineering: [
+    {
+      heading: "The backend is complete and nothing calls it",
+      body: "This is the most important thing to know about the current state. There is a full API — versioned routes, Zod validation, a service layer holding the pricing and availability rules, repositories wrapping transactional writes — and there is not a single fetch to it anywhere in the interface. Every page reads a hardcoded context provider instead, which is why a database event id returns not-found on the detail route while a slug from that provider renders perfectly. Two consequences follow. First, the transactional booking pipeline has never run in the product; it is exercised only directly. Second, the UI has quietly diverged from the schema — the pass screen renders one ticket carrying a quantity, where the database would have produced one row per attendee. Connecting the two is a contained piece of work, but until it happens the screenshots show a prototype sitting in front of a backend rather than on top of it.",
+      bullets: [
+        "Replace the context provider with data fetched from the existing endpoints.",
+        "Move quantity, coupon, and total calculation to the pricing service that already implements it.",
+        "Render one pass per attendee, matching what the booking transaction actually writes.",
+      ],
+    },
     {
       heading: "The race the transaction does not close",
       body: "Availability is checked and then decremented inside a transaction, which is the right instinct but not sufficient on its own. Under the default isolation level two concurrent bookings can both read the same last seat as available, and because the decrement itself is atomic they will both succeed — leaving remaining seats negative. A transaction guarantees all-or-nothing, not serialisability. Closing it properly means making the write conditional on availability so the update matches zero rows when the seat is gone, backing that with a check constraint so the column can never go negative, or raising the isolation level and retrying on conflict. This is the first thing I would fix, and it is a good illustration that wrapping code in a transaction is not the same as protecting an invariant.",
@@ -2009,22 +2051,22 @@ const eventora: CaseStudy = {
 
   outcome: {
     heading: "Outcome",
-    body: "A ticketing platform whose foundations are the part I would defend: fourteen related models, money kept in integers, purchase prices snapshotted so old invoices stay true, an itemised tax breakdown computed server-side, and both booking and cancellation implemented as single transactions with the cancellation reversing earned rewards. It is also unfinished in a specific and stateable way — identity is a stub, payments are simulated, and the seat-availability check needs stronger isolation than a transaction alone provides. Those three things are the work, not a rewrite.",
+    body: "The foundations are what I would defend here: fourteen related models, money kept in integers, purchase prices snapshotted so old invoices stay true, an itemised tax breakdown derived server-side, and both booking and cancellation written as single transactions — with the cancellation reversing earned reward points, which is the part that is easy to miss. What it is not is a finished product. The interface still runs on hardcoded data and has never called that API, identity is a placeholder, payments are simulated, and the availability check needs stronger isolation than a transaction alone gives it. I would rather state those four things precisely than let a good schema imply a shipped platform.",
     bullets: [
-      "Booking writes seats, per-attendee passes, and payment atomically, or writes nothing.",
+      "Booking writes seats, passes, and payment atomically, or writes nothing at all.",
       "Cancellation compensates rather than deletes, including reversing reward points.",
-      "Pricing, discount caps, and GST are derived server-side and stored itemised for reconstruction.",
-      "Auth, real payments, and the oversell race are named as open work rather than implied complete.",
+      "Pricing, discount caps, and GST derived server-side and stored itemised for reconstruction.",
+      "Open work named rather than implied: wiring the UI to the API, sessions, real payments, and the oversell race.",
     ],
   },
 
   roadmap: [
+    "Wire the interface to the existing API and delete the hardcoded context",
     "Real sessions, with every read scoped to the authenticated user",
     "Conditional seat updates plus a non-negative check constraint to close the oversell race",
     "A payment provider, with status moving on a verified webhook",
     "Unguessable, signed ticket codes and a scanning endpoint that burns them",
-    "Relate organiser users to the organiser records they manage",
-    "Reconcile the event-level seat aggregate, or derive it instead of storing it",
+    "Render one pass per attendee, matching what the booking transaction writes",
   ],
 };
 
