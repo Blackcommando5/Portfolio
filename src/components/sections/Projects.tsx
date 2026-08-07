@@ -101,7 +101,19 @@ export function Projects() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
                 >
-                  <GlassCard className="h-full flex flex-col group">
+                  <GlassCard className="relative h-full flex flex-col group">
+                    {/* Stretched link: makes the whole card navigate without
+                        wrapping it in an anchor, which would nest the Code and
+                        Live links inside another link and swallow the video's
+                        controls. Interactive children sit above it via z-10. */}
+                    {project.slug && (
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        aria-label={`${project.title} — read case study`}
+                        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-cyan"
+                      />
+                    )}
+
                     {/* Badge (Final Year / Hackathon) */}
                     {project.badge && (
                       <div className="mb-3">
@@ -116,14 +128,15 @@ export function Projects() {
                     <div className="relative -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 aspect-video overflow-hidden rounded-t-2xl bg-bg-secondary border-b border-border-glass">
                       {project.video ? (
                         /* preload="none" so a card with a clip costs nothing
-                           until someone actually presses play. */
+                           until someone actually presses play. relative z-10
+                           keeps its controls above the stretched link. */
                         <video
                           src={project.video}
                           poster={project.image}
                           controls
                           preload="none"
                           playsInline
-                          className="w-full h-full object-cover"
+                          className="relative z-10 w-full h-full object-cover"
                           aria-label={`${project.title} — gameplay clip`}
                         />
                       ) : project.image ? (
@@ -183,18 +196,20 @@ export function Projects() {
                         ))}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3 mt-auto pt-4 border-t border-border-glass">
+                      {/* z-10 so the outbound links stay clickable over the
+                          stretched card link. */}
+                      <div className="relative z-10 flex flex-wrap items-center gap-3 mt-auto pt-4 border-t border-border-glass">
                         {project.slug && (
-                          <Link
-                            href={`/projects/${project.slug}`}
-                            className="group/link flex items-center gap-1.5 text-sm font-medium text-accent-cyan hover:text-accent-cyan/80 transition-colors"
-                          >
+                          /* Not a link — the stretched overlay owns the click.
+                             A second anchor to the same place would just add a
+                             duplicate tab stop. */
+                          <span className="flex items-center gap-1.5 text-sm font-medium text-accent-cyan pointer-events-none">
                             Read case study
                             <ArrowRight
                               size={14}
-                              className="transition-transform group-hover/link:translate-x-0.5"
+                              className="transition-transform group-hover:translate-x-0.5"
                             />
-                          </Link>
+                          </span>
                         )}
                         {project.github && (
                           <a
@@ -254,7 +269,15 @@ export function Projects() {
                   viewport={{ once: true, margin: "-30px" }}
                   transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.06 }}
                 >
-                  <GlassCard className="group">
+                  <GlassCard className="relative group">
+                    {/* Same stretched-link approach as the featured cards. */}
+                    {project.slug && (
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        aria-label={`${project.title} — read case study`}
+                        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-cyan"
+                      />
+                    )}
                     <div className="flex flex-col gap-2">
                       {/* Title row */}
                       <div className="flex items-start justify-between gap-3">
@@ -266,15 +289,12 @@ export function Projects() {
                             {project.tagline}
                           </p>
                         </div>
-                        {/* Links */}
-                        <div className="flex items-center gap-2 shrink-0">
+                        {/* Links — above the stretched link so they stay usable */}
+                        <div className="relative z-10 flex items-center gap-2 shrink-0">
                           {project.slug && (
-                            <Link
-                              href={`/projects/${project.slug}`}
-                              className="text-[11px] font-medium text-accent-cyan hover:text-accent-cyan/80 transition-colors"
-                            >
+                            <span className="text-[11px] font-medium text-accent-cyan pointer-events-none">
                               Case study
-                            </Link>
+                            </span>
                           )}
                           {project.github && (
                             <a
