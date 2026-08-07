@@ -2,13 +2,14 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Box, Globe, Smartphone, AppWindow, Glasses } from "lucide-react";
+import { Box, Globe, Smartphone, AppWindow, Glasses, BrainCircuit } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { disciplines, projects, assets3d, type Discipline } from "@/lib/data";
 import { clsx } from "clsx";
 
 /* Icon map — lucide component for each discipline */
 const iconMap: Record<Discipline, React.FC<{ size?: number; className?: string }>> = {
+  aiml: BrainCircuit,
   "3d": Box,
   web: Globe,
   app: Smartphone,
@@ -18,6 +19,13 @@ const iconMap: Record<Discipline, React.FC<{ size?: number; className?: string }
 
 /* Discipline accent colors */
 const colorMap: Record<Discipline, { text: string; bg: string; border: string; hoverBorder: string; glow: string }> = {
+  aiml: {
+    text: "text-accent-cyan",
+    bg: "bg-accent-cyan/5",
+    border: "border-accent-cyan/20",
+    hoverBorder: "hover:border-accent-cyan/40",
+    glow: "hover:shadow-[0_0_20px_rgba(0,240,255,0.1)]",
+  },
   "3d": {
     text: "text-accent-green",
     bg: "bg-accent-green/5",
@@ -58,8 +66,20 @@ const colorMap: Record<Discipline, { text: string; bg: string; border: string; h
 export function WhatIDo() {
   /* Count projects + assets per discipline */
   const counts = useMemo(() => {
-    const map: Record<Discipline, number> = { "3d": 0, web: 0, app: 0, windows: 0, arvr: 0 };
-    projects.forEach((p) => map[p.discipline]++);
+    const map: Record<Discipline, number> = {
+      aiml: 0,
+      "3d": 0,
+      web: 0,
+      app: 0,
+      windows: 0,
+      arvr: 0,
+    };
+    /* Count the primary discipline plus any secondary ones, so the AI/ML card
+       reflects every project tagged into it rather than only its own. */
+    projects.forEach((p) => {
+      map[p.discipline]++;
+      p.alsoIn?.forEach((d) => map[d]++);
+    });
     assets3d.forEach((a) => map[a.discipline]++);
     return map;
   }, []);
@@ -78,7 +98,7 @@ export function WhatIDo() {
             What I Do
           </h2>
           <p className="text-text-muted mt-2 text-sm md:text-base max-w-xl mx-auto">
-            Five disciplines, one creative engineer
+            Six disciplines, one creative engineer
           </p>
         </motion.div>
 

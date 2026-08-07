@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, ExternalLink, Lock } from "lucide-react";
 
@@ -24,6 +25,7 @@ import { clsx } from "clsx";
 /* Filter tab definitions */
 const filterTabs: { label: string; value: Discipline | "all" }[] = [
   { label: "All", value: "all" },
+  { label: "AI / ML", value: "aiml" },
   { label: "Web", value: "web" },
   { label: "App", value: "app" },
   { label: "Windows", value: "windows" },
@@ -33,8 +35,13 @@ const filterTabs: { label: string; value: Discipline | "all" }[] = [
 export function Projects() {
   const [activeFilter, setActiveFilter] = useState<Discipline | "all">("all");
 
+  /* Matches the primary discipline or any secondary one, so AI work shows up
+     under AI/ML without leaving the web, app, or desktop filter it lives in. */
   const filteredProjects = projects.filter(
-    (p) => activeFilter === "all" || p.discipline === activeFilter
+    (p) =>
+      activeFilter === "all" ||
+      p.discipline === activeFilter ||
+      p.alsoIn?.includes(activeFilter)
   );
 
   const featured = filteredProjects.filter((p) => p.tier === "featured");
@@ -104,23 +111,31 @@ export function Projects() {
                       </div>
                     )}
 
-                    {/* Image placeholder */}
+                    {/* Thumbnail — renders `image` when set, otherwise a
+                        labelled frame so a missing file never looks broken. */}
                     <div className="relative -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 aspect-video overflow-hidden rounded-t-2xl bg-bg-secondary border-b border-border-glass">
-                      {/* 🔄 SWAP: Replace with real project screenshot
-                          <Image src={project.image} alt={project.title} fill className="object-cover" />
-                      */}
-                      <div className="w-full h-full bg-gradient-to-br from-accent-cyan/5 to-accent-violet/5 flex items-center justify-center">
-                        {project.confidential ? (
-                          <div className="flex items-center gap-2 text-text-muted/60 text-xs">
-                            <Lock size={14} />
-                            <span>Confidential — screenshot needs permission</span>
-                          </div>
-                        ) : (
-                          <span className="text-text-muted text-xs">
-                            {project.title} screenshot
-                          </span>
-                        )}
-                      </div>
+                      {project.image ? (
+                        <Image
+                          src={project.image}
+                          alt={`${project.title} — project thumbnail`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-accent-cyan/5 to-accent-violet/5 flex items-center justify-center">
+                          {project.confidential ? (
+                            <div className="flex items-center gap-2 text-text-muted/60 text-xs">
+                              <Lock size={14} />
+                              <span>Confidential — screenshot needs permission</span>
+                            </div>
+                          ) : (
+                            <span className="text-text-muted text-xs">
+                              {project.title} screenshot
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}

@@ -1,7 +1,7 @@
 /* ── Portfolio Data ─────────────────────────────────────────────────────── */
 /* All content lives here for easy editing. */
 
-export type Discipline = "3d" | "web" | "app" | "windows" | "arvr";
+export type Discipline = "3d" | "web" | "app" | "windows" | "arvr" | "aiml";
 
 /** Set NEXT_PUBLIC_SITE_URL on the host (Vercel/Firebase) once deployed. */
 export const siteUrl =
@@ -53,6 +53,14 @@ export interface DisciplineInfo {
 }
 
 export const disciplines: DisciplineInfo[] = [
+  {
+    id: "aiml",
+    label: "AI / ML Engineer",
+    icon: "BrainCircuit",
+    description:
+      "Putting models into production — vector search, streaming speech, and LLM agents that run inside real products.",
+    sectionHref: "#projects",
+  },
   {
     id: "3d",
     label: "3D Modeler",
@@ -242,6 +250,12 @@ export interface Project {
   title: string;
   /** Set this to link the card to a long-form write-up at /projects/<slug>. */
   slug?: string;
+  /**
+   * Extra disciplines this project also belongs to. `discipline` stays the
+   * primary one so a project keeps its home filter, while AI work — which cuts
+   * across web, mobile, and desktop — can still be listed together.
+   */
+  alsoIn?: Discipline[];
   tagline: string;
   problem: string;
   solution: string;
@@ -249,6 +263,10 @@ export interface Project {
   discipline: Discipline;
   github?: string;
   live?: string;
+  /**
+   * Card thumbnail, e.g. "/projects/thumbs/wedfind-ai.webp".
+   * Absent renders the labelled placeholder frame instead of a broken image.
+   */
   image?: string;
   tier: ProjectTier;
   confidential?: boolean;
@@ -263,6 +281,7 @@ export const projects: Project[] = [
   {
     title: "WedFind AI",
     slug: "wedfind-ai",
+    alsoIn: ["aiml"],
     tagline: "Face-recognition photo delivery for wedding studios",
     problem:
       "Wedding studios shoot thousands of photos per event, then spend days manually sorting and delivering them family by family. The usual shortcut — one bulk gallery link — hands every guest photos of every other guest, which under India's DPDP Act is a legal problem, not just a rude one.",
@@ -276,6 +295,7 @@ export const projects: Project[] = [
   {
     title: "GMeeting — AI Meeting Assistant",
     slug: "meeting-assistant",
+    alsoIn: ["aiml"],
     tagline: "Video calls that caption themselves and write their own minutes",
     problem:
       "Someone in every meeting types instead of thinking, and still loses the things that matter — who committed to what, what was decided, what the deadline was. Bolt-on transcription bots make it worse by opening a second microphone stream that fights the call for audio.",
@@ -302,6 +322,7 @@ export const projects: Project[] = [
   {
     title: "AE Prompt Bridge — After Effects AI Plugin",
     slug: "ae-prompt-bridge",
+    alsoIn: ["aiml"],
     tagline: "Describe a motion graphic in prose, watch After Effects build it",
     problem:
       "Automating After Effects means writing ExtendScript — ES3, no setTimeout, no file watching, no real debugger — in an app where every attempt costs a save, an app switch, a menu dive, and a modal dialog. The official route to a real tool is a CEP extension with a manifest and a build step, so the automation mostly never gets written.",
@@ -327,6 +348,7 @@ export const projects: Project[] = [
   {
     title: "Nur — Plant Nursery App",
     slug: "nur",
+    alsoIn: ["aiml"],
     tagline: "Flutter catalogue app with a Firebase-backed admin content pipeline",
     problem:
       "A plant nursery's inventory lived in photos and messages, so there was no browsable catalogue and no way for the owner to add stock without a developer.",
@@ -339,6 +361,7 @@ export const projects: Project[] = [
   {
     title: "What's For Dinner — AI Meal Planner",
     slug: "whats-for-dinner",
+    alsoIn: ["aiml"],
     tagline: "Photograph your shelf, get a meal you can actually cook",
     problem:
       "Recipe apps have the constraints back to front — they start from a dish and hand you a shopping list, when the real question starts from a shelf of half-used ingredients. Planning from recipes rather than from stock is what produces both over-buying and waste. And once you know what you want, a list of nearby restaurants still won't tell you which is actually good at that dish.",
