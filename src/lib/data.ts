@@ -285,6 +285,7 @@ export const projects: Project[] = [
 
   {
     title: "WedFind AI",
+    image: "/projects/thumbs/wedfind-ai.webp",
     slug: "wedfind-ai",
     alsoIn: ["aiml"],
     tagline: "Face-recognition photo delivery for wedding studios",
@@ -299,6 +300,7 @@ export const projects: Project[] = [
   },
   {
     title: "GMeeting — AI Meeting Assistant",
+    image: "/projects/thumbs/gmeeting.webp",
     slug: "meeting-assistant",
     alsoIn: ["aiml"],
     tagline: "Video calls that caption themselves and write their own minutes",
@@ -314,6 +316,7 @@ export const projects: Project[] = [
   },
   {
     title: "TeamShare — Offline LAN File Sharing",
+    image: "/projects/thumbs/teamshare.webp",
     slug: "teamshare",
     tagline: "Zero-cloud file sharing for teams on the same network",
     problem:
@@ -326,6 +329,7 @@ export const projects: Project[] = [
   },
   {
     title: "AE Prompt Bridge — After Effects AI Plugin",
+    image: "/projects/thumbs/ae-prompt-bridge.webp",
     slug: "ae-prompt-bridge",
     alsoIn: ["aiml"],
     tagline: "Describe a motion graphic in prose, watch After Effects build it",
@@ -339,6 +343,7 @@ export const projects: Project[] = [
   },
   {
     title: "Figma to After Effects — Figma Plugin",
+    image: "/projects/thumbs/figma-to-after-effects.webp",
     slug: "figma-to-after-effects",
     tagline: "Rebuild a Figma design as native After Effects layers, pen paths included",
     problem:
@@ -352,6 +357,7 @@ export const projects: Project[] = [
   },
   {
     title: "Nur — Plant Nursery App",
+    image: "/projects/thumbs/nur.webp",
     slug: "nur",
     alsoIn: ["aiml"],
     tagline: "Flutter catalogue app with a Firebase-backed admin content pipeline",
@@ -365,6 +371,7 @@ export const projects: Project[] = [
   },
   {
     title: "What's For Dinner — AI Meal Planner",
+    image: "/projects/thumbs/whats-for-dinner.webp",
     slug: "whats-for-dinner",
     alsoIn: ["aiml"],
     tagline: "Photograph your shelf, get a meal you can actually cook",
@@ -394,6 +401,7 @@ export const projects: Project[] = [
   },
   {
     title: "Math-Game — Interactive VR Math Game",
+    image: "/projects/thumbs/math-game.webp",
     tagline: "NPC-driven math adventure game built in Unity for Quest and WebGL",
     problem:
       "Traditional math games lack immersion and narrative engagement. Students disengage from repetitive drill exercises.",
@@ -405,6 +413,7 @@ export const projects: Project[] = [
   },
   {
     title: "Number System 2 — VR Number Classification",
+    image: "/projects/thumbs/number-system-2.webp",
     tagline: "Immersive VR lesson for teaching number systems and arithmetic",
     problem:
       "Abstract number system concepts (natural numbers, integers, rational/irrational) are hard for students to grasp from flat diagrams.",
@@ -421,6 +430,7 @@ export const projects: Project[] = [
 
   {
     title: "Eventora — Event Ticketing Platform",
+    image: "/projects/thumbs/eventora.webp",
     slug: "eventora",
     tagline: "Discovery and ticket booking, built from the transaction outward",
     problem:
@@ -435,6 +445,7 @@ export const projects: Project[] = [
   /* ── Client work — described by sector only, never by client name ── */
   {
     title: "Bakery Ingredients Wholesaler — Storefront & Admin",
+    image: "/projects/thumbs/bakery-wholesaler.webp",
     slug: "bakery-storefront",
     tagline: "B2B catalogue, customer accounts, and a twelve-section back office",
     problem:
@@ -447,6 +458,7 @@ export const projects: Project[] = [
   },
   {
     title: "Furniture Retail — Marketing Site",
+    image: "/projects/thumbs/furniture-retail.webp",
     slug: "furniture-retail",
     tagline: "Owner-editable content and enquiries that land where the owner already works",
     problem:
@@ -469,6 +481,7 @@ export const projects: Project[] = [
      sixteen lessons deliverable inside one internship. ───────────────────── */
   {
     title: "Lines and Angles — VR Lesson",
+    image: "/projects/thumbs/lines-and-angles.webp",
     tagline: "Angle pair relationships explored at room scale",
     problem:
       "Complementary, supplementary, and vertically opposite angle pairs are taught as labels on a static diagram, so students memorise the names without seeing that the relationship holds as the lines move.",
@@ -481,6 +494,7 @@ export const projects: Project[] = [
   },
   {
     title: "Basic Geometry — VR Lesson",
+    image: "/projects/thumbs/basic-geometry.webp",
     tagline: "Triangle construction by side and angle criteria",
     problem:
       "Construction rules are learned as procedures to reproduce with compass and ruler, which hides why each criterion is sufficient to fix a triangle's shape.",
@@ -493,6 +507,7 @@ export const projects: Project[] = [
   },
   {
     title: "Circle Theorems — VR Lesson",
+    image: "/projects/thumbs/circle-theorems.webp",
     tagline: "Five circle theorems, each as its own interactive proof",
     problem:
       "Circle theorems are a set of results students learn separately and rarely connect, because a textbook figure cannot be dragged to test whether the theorem still holds.",
@@ -505,6 +520,7 @@ export const projects: Project[] = [
   },
   {
     title: "Tangent to a Circle — VR Lesson",
+    image: "/projects/thumbs/tangent-to-a-circle.webp",
     tagline: "Tangent construction with live distance measurement",
     problem:
       "The defining property of a tangent — that it meets the radius at a right angle — is easy to state and hard to feel from a drawing.",
@@ -517,6 +533,7 @@ export const projects: Project[] = [
   },
   {
     title: "Angle Bisector — VR Lesson",
+    image: "/projects/thumbs/angle-bisector.webp",
     tagline: "Bisection built on a reusable lesson base class",
     problem:
       "A bisector drawn once on paper looks like an answer rather than a property that holds for any angle.",
@@ -529,6 +546,7 @@ export const projects: Project[] = [
   },
   {
     title: "Perpendicular Bisector — VR Lesson",
+    image: "/projects/thumbs/perpendicular-bisector.webp",
     tagline: "Equidistance made visible as a locus",
     problem:
       "Students learn to construct a perpendicular bisector before understanding that it is the set of all points equidistant from two others.",
@@ -541,6 +559,7 @@ export const projects: Project[] = [
   },
   {
     title: "Equilateral Triangle — VR Lesson",
+    image: "/projects/thumbs/equilateral-triangle.webp",
     tagline: "Point-by-point construction with guided instructions",
     problem:
       "Equal sides and equal angles are stated as a definition, so the constraint that forces both at once is never experienced.",
@@ -553,6 +572,7 @@ export const projects: Project[] = [
   },
   {
     title: "Triangle Congruence Theorems — VR Lesson",
+    image: "/projects/thumbs/triangle-congruence-theorems.webp",
     tagline: "Matching triangles against congruence criteria",
     problem:
       "Congruence tests are memorised as acronyms, and students apply the wrong one because they never manipulated the triangles the rules describe.",
@@ -565,6 +585,7 @@ export const projects: Project[] = [
   },
   {
     title: "Quadrilateral Explorer — VR Lesson",
+    image: "/projects/thumbs/quadrilateral-explorer.webp",
     tagline: "Quadrilateral families and what distinguishes them",
     problem:
       "The quadrilateral hierarchy is taught as a table of properties, which does not convey that a square is a rectangle is a parallelogram.",
@@ -577,6 +598,7 @@ export const projects: Project[] = [
   },
   {
     title: "Coordinate Geometry — VR Lesson",
+    image: "/projects/thumbs/coordinate-geometry.webp",
     tagline: "Standing inside the coordinate plane",
     problem:
       "Plotting points is a paper exercise, so the plane stays an abstraction rather than a space with structure.",
@@ -589,6 +611,7 @@ export const projects: Project[] = [
   },
   {
     title: "Angles of Elevation and Depression — VR Lesson",
+    image: "/projects/thumbs/angles-of-elevation-and-depression.webp",
     tagline: "Trigonometry with a real line of sight",
     problem:
       "Elevation and depression problems are the classic case where students set up the wrong ratio, because a side-on textbook diagram is not what looking up at something feels like.",
@@ -601,6 +624,7 @@ export const projects: Project[] = [
   },
   {
     title: "Surface Area & Volume Explorer — VR Lesson",
+    image: "/projects/thumbs/surface-area-volume-explorer.webp",
     tagline: "Solids you can resize and unwrap",
     problem:
       "Surface area and volume formulas are memorised separately from the solids they describe, so students cannot say which quantity a formula returns.",
@@ -613,6 +637,7 @@ export const projects: Project[] = [
   },
   {
     title: "Number Systems — VR Lesson",
+    image: "/projects/thumbs/number-systems.webp",
     tagline: "Classifying numbers through built structures",
     problem:
       "Naturals, integers, rationals, and irrationals are presented as nested definitions, which is a diagram to memorise rather than a distinction to reason about.",
@@ -625,6 +650,7 @@ export const projects: Project[] = [
   },
   {
     title: "Statistics Data Room — VR Lesson",
+    image: "/projects/thumbs/statistics-data-room.webp",
     tagline: "Data representation as a space to walk through",
     problem:
       "Mean, median, and mode are computed before students grasp what each summary actually says about a distribution's shape.",
@@ -637,6 +663,7 @@ export const projects: Project[] = [
   },
   {
     title: "Mirror Reflection — VR Lesson",
+    image: "/projects/thumbs/mirror-reflection.webp",
     tagline: "Reflection and refraction with a real beam",
     problem:
       "The law of reflection is stated as an equality of angles, which a static ray diagram demonstrates once and never again.",
@@ -649,6 +676,7 @@ export const projects: Project[] = [
   },
   {
     title: "Projectile Motion — VR Lesson",
+    image: "/projects/thumbs/projectile-motion.webp",
     tagline: "Launch parameters and the path they produce",
     problem:
       "Projectile motion is solved algebraically before students have any intuition for how launch angle and force trade off against range.",
@@ -661,6 +689,7 @@ export const projects: Project[] = [
   },
   {
     title: "Experiment",
+    image: "/projects/thumbs/experiment.webp",
     tagline: "VR interaction testbed for the lesson library",
     problem:
       "The lesson library needed physical interactions — picking up, tilting, heating — that are easier to get wrong inside a lesson than in a scratch scene.",
