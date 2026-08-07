@@ -268,6 +268,11 @@ export interface Project {
    * Absent renders the labelled placeholder frame instead of a broken image.
    */
   image?: string;
+  /**
+   * Gameplay or demo clip. Rendered in place of the thumbnail with `image` as
+   * its poster, and never preloaded — the card stays cheap until it is played.
+   */
+  video?: string;
   tier: ProjectTier;
   confidential?: boolean;
   badge?: ProjectBadge;
@@ -373,6 +378,19 @@ export const projects: Project[] = [
     tier: "featured",
     badge: { label: "🏆 Hackathon Project — Quadrabay", variant: "green" },
     // 🔄 MISSING: App screenshot showing meal suggestion / grocery list
+  },
+  {
+    title: "Sun Temple — Unreal Adventure Game",
+    image: "/projects/thumbs/sun-temple.webp",
+    tagline: "Third-person adventure built on Unreal's animation sample",
+    problem:
+      "Unreal's own sample content gives you a beautiful level and a fully rigged character, and stops exactly where a game would start — there is no objective, no reason to move through the space, and nothing to find.",
+    solution:
+      "Took Epic's Game Animation Sample character and the Sun Temple environment as a starting point and built the missing game on top: an objective system that tracks progress and surfaces it on screen (\"Entered in the Temple — Find the Chest\"), triggered progression through the level, and a dressed scene of roughly 660 actors with fire VFX, volumetric lighting, and reflective flooring driving the atmosphere. My work here is the gameplay layer, level dressing, and lighting — the base character rig and temple architecture are Epic sample assets, not my own art.",
+    tech: ["Unreal Engine 5", "Blueprints", "Game Animation Sample", "Niagara VFX", "Lumen", "Level Design"],
+    discipline: "3d",
+    tier: "featured",
+    video: "/videos/unreal-sun-temple.mp4",
   },
   {
     title: "Math-Game — Interactive VR Math Game",

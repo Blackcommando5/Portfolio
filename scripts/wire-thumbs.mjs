@@ -83,21 +83,18 @@ for (let i = 0; i < lines.length; i++) {
   const slug = slugFor(title);
   const file = fileFor(slug);
 
+  /* Consume the whole object, to its closing brace at two-space indent.
+     An `image` field can sit anywhere inside it — an earlier version only
+     looked at the lines directly under the title and happily inserted a
+     duplicate when the field was further down. */
+  let end = i + 1;
+  while (end < lines.length && !/^  \},?$/.test(lines[end])) end++;
+
+  const body = lines.slice(i + 1, end);
+  const hasImage = body.some((l) => /^\s*image:\s*"/.test(l));
+  const kept = body.filter((l) => !/^\s*image:\s*"/.test(l));
+
   out.push(line);
-
-  /* An existing image field sits directly below the title. */
-  let next = i + 1;
-  const following = [];
-  while (next < lines.length && /^\s*(slug|alsoIn|image):/.test(lines[next])) {
-    following.push(lines[next]);
-    next++;
-  }
-  const existingIdx = following.findIndex((l) => /^\s*image:/.test(l));
-  const hasImage = existingIdx !== -1;
-
-  const kept = following.filter((l) => !/^\s*image:/.test(l));
-  out.push(...kept);
-
   if (file) {
     out.push(`${indent}image: "${WEB_DIR}/${file}",`);
     if (hasImage) unchanged++;
@@ -107,8 +104,9 @@ for (let i = 0; i < lines.length; i++) {
     if (hasImage) removed++;
     report.push({ title, slug, status: hasImage ? "removed" : "missing", file: `${slug}.webp` });
   }
+  out.push(...kept);
 
-  i = next - 1;
+  i = end - 1;
 }
 
 const result = out.join(EOL);

@@ -114,7 +114,19 @@ export function Projects() {
                     {/* Thumbnail — renders `image` when set, otherwise a
                         labelled frame so a missing file never looks broken. */}
                     <div className="relative -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 aspect-video overflow-hidden rounded-t-2xl bg-bg-secondary border-b border-border-glass">
-                      {project.image ? (
+                      {project.video ? (
+                        /* preload="none" so a card with a clip costs nothing
+                           until someone actually presses play. */
+                        <video
+                          src={project.video}
+                          poster={project.image}
+                          controls
+                          preload="none"
+                          playsInline
+                          className="w-full h-full object-cover"
+                          aria-label={`${project.title} — gameplay clip`}
+                        />
+                      ) : project.image ? (
                         <Image
                           src={project.image}
                           alt={`${project.title} — project thumbnail`}
