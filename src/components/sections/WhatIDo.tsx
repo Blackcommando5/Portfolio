@@ -102,7 +102,8 @@ export function WhatIDo() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Six across on large screens so no discipline wraps onto its own row. */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
           {disciplines.map((disc, i) => {
             const Icon = iconMap[disc.id];
             const colors = colorMap[disc.id];
@@ -117,7 +118,7 @@ export function WhatIDo() {
               >
                 <GlassCard
                   className={clsx(
-                    "h-full flex flex-col items-center text-center gap-3 py-6 px-4 cursor-pointer",
+                    "h-full flex flex-col items-center text-center gap-3 py-6 px-4 lg:px-3 cursor-pointer",
                     "transition-all duration-300",
                     colors.hoverBorder,
                     colors.glow
