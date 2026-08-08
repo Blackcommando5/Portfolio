@@ -129,6 +129,15 @@ export function Projects() {
                           </Badge>
                         </div>
                       )}
+                      {/* Employer-owned work. Stated on the card itself, since
+                          the thumbnail no longer carries the notice now that
+                          every project has a real image. */}
+                      {project.confidential && (
+                        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full border border-amber-400/25 bg-bg-primary/85 px-2.5 py-1 text-[11px] font-medium text-amber-300/90 backdrop-blur-sm">
+                          <Lock size={11} />
+                          Company project — confidential
+                        </div>
+                      )}
                       {project.video ? (
                         /* preload="none" so a card with a clip costs nothing
                            until someone actually presses play. relative z-10
@@ -237,9 +246,9 @@ export function Projects() {
                           </a>
                         )}
                         {project.confidential && (
-                          <span className="flex items-center gap-1.5 text-sm text-text-muted/50">
+                          <span className="flex items-center gap-1.5 text-sm text-amber-300/70">
                             <Lock size={14} />
-                            Confidential
+                            Employer-owned — media pending approval
                           </span>
                         )}
                       </div>
@@ -322,8 +331,9 @@ export function Projects() {
                             </a>
                           )}
                           {project.confidential && (
-                            <span className="text-text-muted/40" title="Confidential project">
-                              <Lock size={14} />
+                            <span className="flex items-center gap-1 rounded-full border border-amber-400/25 bg-amber-400/5 px-2 py-0.5 text-[10px] font-medium text-amber-300/90 whitespace-nowrap">
+                              <Lock size={10} />
+                              Confidential
                             </span>
                           )}
                         </div>
