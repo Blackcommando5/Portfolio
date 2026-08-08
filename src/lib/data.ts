@@ -30,7 +30,8 @@ export const roles = [
 
 /* ── Updated: Open to Work status ───────────────────────────────────────── */
 export const currentStatus = {
-  badge: "🟢 Open to Work — 3D, Web, App, Windows & AR/VR Developer",
+  /* No emoji dot — the Hero renders its own animated status dot beside this. */
+  badge: "Open to Work — AI/ML, Web, App, Windows, 3D & AR/VR",
 };
 
 export const recentWork = {

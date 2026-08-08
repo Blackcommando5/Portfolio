@@ -44,15 +44,19 @@ export function Hero() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               {/* Status badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm mb-6">
-                <span className="w-2 h-2 rounded-full bg-accent-green animate-status-pulse" />
+              {/* max-w-full lets the pill wrap instead of running off a phone
+                  screen — the label is long enough to need two lines there. */}
+              <div className="inline-flex max-w-full items-start gap-2 px-4 py-2 rounded-full glass text-sm mb-6 text-left">
+                <span className="mt-1.5 w-2 h-2 shrink-0 rounded-full bg-accent-green animate-status-pulse" />
                 <span className="text-accent-green font-medium">
                   {currentStatus.badge}
                 </span>
               </div>
 
-              {/* Name */}
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-wider leading-tight">
+              {/* Name — starts a step smaller with tighter tracking, because
+                  "Subashkrishnan" is long enough to overflow a 360px screen at
+                  text-4xl with wide letter spacing. */}
+              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide sm:tracking-wider leading-tight break-words">
                 <span className="text-text-primary">{siteConfig.name.split(" ")[0]}</span>
                 <br />
                 <span className="text-accent-cyan glow-text">
@@ -60,8 +64,9 @@ export function Hero() {
                 </span>
               </h1>
 
-              {/* Rotating role titles */}
-              <div className="mt-4 h-8 overflow-hidden">
+              {/* Rotating role titles. The window clips the slide transition on
+                  purpose; h-9 keeps the settled line clear of the edges. */}
+              <div className="mt-4 h-9 overflow-hidden">
                 <motion.p
                   key={roleIndex}
                   initial={{ opacity: 0, y: 20 }}
