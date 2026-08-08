@@ -421,7 +421,7 @@ export const projects: Project[] = [
       "Personal post-internship project: a Unity VR lesson that teaches number classification and arithmetic through interactive 3D objects, narration, sorting challenges, and a portal-based progression system. Features answer tokens, combine stations, and a hall of knowledge.",
     tech: ["Unity", "C#", "Meta Quest 3S", "XR Interaction Toolkit", "URP"],
     discipline: "arvr",
-    tier: "featured",
+    tier: "secondary",
   },
 
   /* ══════════════════════════════════════════════════════════════════════
@@ -439,7 +439,7 @@ export const projects: Project[] = [
       "Next.js 16 platform over 14 related Prisma models on PostgreSQL. Money is stored as integers, each booking line snapshots its purchase price so a later price change cannot rewrite an old invoice, and subtotal, discount, tiered fee, and 18% GST are derived server-side and stored itemised. Booking runs as one transaction — booking, line items, seat decrements, one scannable pass per attendee, and a payment record — while cancellation compensates rather than deletes, reversing earned reward points. Repository and service layers sit behind a versioned API with Zod at the edge.",
     tech: ["Next.js 16", "React 19", "TypeScript", "Prisma 7", "PostgreSQL", "Zod", "Tailwind v4"],
     discipline: "web",
-    tier: "secondary",
+    tier: "featured",
   },
 
   /* ── Client work — described by sector only, never by client name ── */
@@ -467,7 +467,7 @@ export const projects: Project[] = [
       "Next.js 14 App Router site where every piece of content — business details, catalogue, categories, testimonials — lives in typed data modules the owner can edit without touching components, with categories driving both the URLs and the catalogue filters. Enquiries default to a pre-filled WhatsApp hand-off rather than email, so there is no backend to run and no deliverability to lose, with a Resend path available behind an env var. SEO is treated as a feature: generated sitemap and robots files, a dynamic Open Graph image, and JSON-LD structured data. Pre-launch placeholders are marked in-code so nothing provisional ships by accident.",
     tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "shadcn/ui", "Framer Motion", "React Hook Form", "Zod", "Resend"],
     discipline: "web",
-    tier: "secondary",
+    tier: "featured",
   },
 
   /* ── Sashainfinity internship — individual VR lessons ────────────────────
