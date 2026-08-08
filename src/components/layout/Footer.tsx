@@ -46,7 +46,9 @@ export function Footer() {
               href={siteConfig.links.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-text-muted hover:text-accent-cyan transition-colors"
+              /* Fixed 40px box so the icon meets a comfortable tap size on
+                 touch screens — an 18px icon alone is far too small. */
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-text-muted hover:text-accent-cyan hover:bg-accent-cyan/5 transition-colors"
               aria-label="GitHub"
             >
               <GitHubIcon size={18} />
@@ -55,7 +57,9 @@ export function Footer() {
               href={siteConfig.links.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-text-muted hover:text-accent-cyan transition-colors"
+              /* Fixed 40px box so the icon meets a comfortable tap size on
+                 touch screens — an 18px icon alone is far too small. */
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-text-muted hover:text-accent-cyan hover:bg-accent-cyan/5 transition-colors"
               aria-label="LinkedIn"
             >
               <LinkedInIcon size={18} />

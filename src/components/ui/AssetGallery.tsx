@@ -59,7 +59,7 @@ export function AssetGallery({ images, aspectRatio = "square" }: AssetGalleryPro
                 e.stopPropagation();
                 setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
               }}
-              className="absolute left-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-bg-surface/80 border border-border-glass flex items-center justify-center text-text-muted hover:text-accent-cyan transition-colors cursor-pointer"
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-bg-surface/80 border border-border-glass flex items-center justify-center text-text-muted hover:text-accent-cyan transition-colors cursor-pointer"
               aria-label="Previous image"
             >
               <ChevronLeft size={12} />
@@ -69,7 +69,7 @@ export function AssetGallery({ images, aspectRatio = "square" }: AssetGalleryPro
                 e.stopPropagation();
                 setActiveIndex((prev) => (prev + 1) % images.length);
               }}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-bg-surface/80 border border-border-glass flex items-center justify-center text-text-muted hover:text-accent-cyan transition-colors cursor-pointer"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-bg-surface/80 border border-border-glass flex items-center justify-center text-text-muted hover:text-accent-cyan transition-colors cursor-pointer"
               aria-label="Next image"
             >
               <ChevronRight size={12} />
@@ -88,7 +88,7 @@ export function AssetGallery({ images, aspectRatio = "square" }: AssetGalleryPro
                 e.stopPropagation();
                 setActiveIndex(i);
               }}
-              className={`relative shrink-0 w-8 h-8 rounded border overflow-hidden cursor-pointer transition-all ${
+              className={`relative shrink-0 w-10 h-10 rounded border overflow-hidden cursor-pointer transition-all ${
                 i === activeIndex
                   ? "border-accent-cyan/50 ring-1 ring-accent-cyan/30"
                   : "border-border-glass opacity-60 hover:opacity-100"

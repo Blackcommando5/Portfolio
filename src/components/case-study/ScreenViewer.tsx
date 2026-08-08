@@ -185,7 +185,7 @@ export function ScreenViewer({ groups }: { groups: ScreenGroup[] }) {
               <button
                 onClick={() => step(-1)}
                 aria-label="Previous screen"
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-border-glass bg-bg-primary text-text-muted transition-colors hover:text-accent-cyan"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-border-glass bg-bg-primary text-text-muted transition-colors hover:text-accent-cyan"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -195,7 +195,7 @@ export function ScreenViewer({ groups }: { groups: ScreenGroup[] }) {
               <button
                 onClick={() => step(1)}
                 aria-label="Next screen"
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-border-glass bg-bg-primary text-text-muted transition-colors hover:text-accent-cyan"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-border-glass bg-bg-primary text-text-muted transition-colors hover:text-accent-cyan"
               >
                 <ChevronRight size={14} />
               </button>
