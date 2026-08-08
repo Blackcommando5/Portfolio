@@ -170,8 +170,11 @@ export function Showcase3D() {
           {/* Right panel: 3D Viewer or Gallery */}
           <motion.div
             className="lg:col-span-2"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            /* Enters vertically, not horizontally: this panel is full width on
+               mobile, so a 30px x-offset pushed it past the screen edge and
+               widened the whole page until the animation resolved. */
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
