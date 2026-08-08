@@ -44,8 +44,20 @@ export function Projects() {
       p.alsoIn?.includes(activeFilter)
   );
 
-  const featured = filteredProjects.filter((p) => p.tier === "featured");
-  const secondary = filteredProjects.filter((p) => p.tier === "secondary");
+  /* The featured/compact split is an editorial device for the "All" overview,
+     where 30 full cards would be unreadable. Once someone picks a discipline
+     they have asked to see that discipline, so every match renders as a full
+     card and nothing is demoted into a one-line list. */
+  const isAll = activeFilter === "all";
+  const featured = isAll
+    ? filteredProjects.filter((p) => p.tier === "featured")
+    : filteredProjects;
+  const secondary = isAll
+    ? filteredProjects.filter((p) => p.tier === "secondary")
+    : [];
+
+  const activeLabel =
+    filterTabs.find((t) => t.value === activeFilter)?.label ?? "All";
 
   return (
     <section id="projects" className="relative py-20 md:py-28">
@@ -90,7 +102,9 @@ export function Projects() {
           >
             <h2 className="text-sm uppercase tracking-widest text-text-muted font-bold mb-6 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-              Featured Projects
+              {isAll
+                ? "Featured Projects"
+                : `${activeLabel} — ${featured.length} project${featured.length === 1 ? "" : "s"}`}
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured.map((project, i) => (
