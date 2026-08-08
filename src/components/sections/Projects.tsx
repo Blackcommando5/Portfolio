@@ -106,10 +106,16 @@ export function Projects() {
                 ? "Featured Projects"
                 : `${activeLabel} — ${featured.length} project${featured.length === 1 ? "" : "s"}`}
             </h2>
+            {/* min-w-0 on the grid items is load-bearing: a grid item defaults
+                to min-width:auto, so the track cannot shrink below the item's
+                min-content width. Card titles use `truncate`, which sets
+                white-space:nowrap and makes that min-content the full untruncated
+                title — enough to push the grid wider than a phone screen. */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured.map((project, i) => (
                 <motion.div
                   key={project.title}
+                  className="min-w-0"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
@@ -290,6 +296,7 @@ export function Projects() {
               {secondary.map((project, i) => (
                 <motion.div
                   key={project.title}
+                  className="min-w-0"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-30px" }}
@@ -327,7 +334,9 @@ export function Projects() {
                               href={project.github}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-text-muted hover:text-accent-cyan transition-colors"
+                              /* -m-2 p-2 grows the tap area to 40px without
+                                 changing the icon's visual size or spacing. */
+                              className="-m-2 p-2 text-text-muted hover:text-accent-cyan transition-colors"
                               aria-label="View source code"
                             >
                               <GitHubIcon size={14} />
@@ -338,7 +347,7 @@ export function Projects() {
                               href={project.live}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-text-muted hover:text-accent-cyan transition-colors"
+                              className="-m-2 p-2 text-text-muted hover:text-accent-cyan transition-colors"
                               aria-label="View live site"
                             >
                               <ExternalLink size={14} />
