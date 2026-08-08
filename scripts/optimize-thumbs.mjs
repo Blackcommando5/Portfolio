@@ -76,3 +76,14 @@ console.log(
   `\n${sources.length} converted · ${(before / 1024).toFixed(1)} MB -> ${(after / 1024).toFixed(1)} MB`
 );
 console.log("originals removed so only the WebP remains per slug");
+
+/* Replacing a file without changing its name leaves the image optimizer serving
+   the previous version from cache. There are two caches — the build one and a
+   separate dev one — and missing either means a stale thumbnail on screen. */
+for (const rel of [".next/cache/images", ".next/dev/cache/images"]) {
+  const dir = path.join(process.cwd(), rel);
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+    console.log(`cleared ${rel}`);
+  }
+}
