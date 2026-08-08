@@ -114,18 +114,21 @@ export function Projects() {
                       />
                     )}
 
-                    {/* Badge (Final Year / Hackathon) */}
-                    {project.badge && (
-                      <div className="mb-3">
-                        <Badge variant={project.badge.variant}>
-                          {project.badge.label}
-                        </Badge>
-                      </div>
-                    )}
+                    {/* Thumbnail is the first element in every card so the images
+                        line up across a row. The badge is overlaid on it rather
+                        than stacked above — sitting above pushed the image down
+                        on badged cards only, which broke that alignment.
 
-                    {/* Thumbnail — renders `image` when set, otherwise a
-                        labelled frame so a missing file never looks broken. */}
+                        Renders `image` when set, otherwise a labelled frame so a
+                        missing file never looks broken. */}
                     <div className="relative -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 aspect-video overflow-hidden rounded-t-2xl bg-bg-secondary border-b border-border-glass">
+                      {project.badge && (
+                        <div className="absolute top-3 left-3 z-20">
+                          <Badge variant={project.badge.variant}>
+                            {project.badge.label}
+                          </Badge>
+                        </div>
+                      )}
                       {project.video ? (
                         /* preload="none" so a card with a clip costs nothing
                            until someone actually presses play. relative z-10
