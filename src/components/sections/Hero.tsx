@@ -53,13 +53,25 @@ export function Hero() {
                 </span>
               </div>
 
-              {/* Name — starts a step smaller with tighter tracking, because
-                  "Subashkrishnan" is long enough to overflow a 360px screen at
-                  text-4xl with wide letter spacing. */}
-              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide sm:tracking-wider leading-tight break-words">
-                <span className="text-text-primary">{siteConfig.name.split(" ")[0]}</span>
-                <br />
-                <span className="text-accent-cyan glow-text">
+              {/* Name.
+                  "Subashkrishnan" is one long unbreakable word, so the size is
+                  capped where it still fits — at text-7xl it overflowed and broke
+                  mid-word into "Subashkrish / nan". whitespace-nowrap guarantees
+                  a word is never split; the line break between parts is explicit.
+
+                  The ladder dips at lg on purpose: that is where the hero becomes
+                  two columns, so the text column halves (720px at md down to
+                  456px at lg) even though the viewport grew. */}
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-bold tracking-wide sm:tracking-wider leading-tight">
+                {/* Inline rather than forced onto separate lines: "Subashkrishnan
+                    K" fits on one line at every breakpoint, and a lone "K" on its
+                    own row read as a layout error. The space between the spans is
+                    the only break opportunity, so if a narrower screen ever needs
+                    two lines it wraps there instead of inside a word. */}
+                <span className="whitespace-nowrap text-text-primary">
+                  {siteConfig.name.split(" ")[0]}
+                </span>{" "}
+                <span className="whitespace-nowrap text-accent-cyan glow-text">
                   {siteConfig.name.split(" ").slice(1).join(" ")}
                 </span>
               </h1>

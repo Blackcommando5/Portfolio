@@ -25,8 +25,13 @@ export function Experience() {
             return (
               <motion.div
                 key={exp.company}
-                initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                /* Vertical, not the alternating horizontal slide it used to be.
+                   Entries below the fold sit at their initial offset until they
+                   scroll into view, and a ±40px x-offset on a single-column
+                   mobile timeline widened the whole document — enough to make
+                   phones zoom the page out on first load. */
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className={`relative mb-12 last:mb-0 md:w-1/2 ${
