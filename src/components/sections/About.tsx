@@ -42,7 +42,7 @@ export function About() {
               {about.education.college}
             </p>
             <p className="text-text-muted text-sm mt-1">
-              {about.education.period} · CGPA: {about.education.gpa}
+              {about.education.period}
             </p>
             <p className="text-accent-green text-sm mt-1 font-medium">
               ✅ {about.education.status}

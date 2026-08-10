@@ -35,12 +35,12 @@ export const currentStatus = {
 };
 
 export const recentWork = {
-  role: "VR Developer Intern",
+  role: "VR Developer",
   company: "Sashainfinity",
-  period: "Feb 2026 – Apr 2026",
+  period: "Apr 2026 – Aug 2026",
   label: "Recent Work",
   description:
-    "Built a VR-based interactive math-learning app in Unity during my internship at Sashainfinity. Created immersive real-time scenes, optimized 3D assets, developed Unreal Engine environments with lighting, materials, and level design, and prototyped interactive C# scripts for educational gameplay mechanics.",
+    "Built VR interactive maths-learning experiences in Unity for Meta Quest 3S — immersive real-time scenes, optimised 3D assets, Unreal Engine environments with lighting, materials, and level design, and interactive C# systems for educational gameplay. Joined as an intern in January and continued full-time from April.",
   tech: ["Unity", "C#", "Unreal Engine", "Blender", "VR"],
 };
 
@@ -101,12 +101,11 @@ export const disciplines: DisciplineInfo[] = [
 
 export const about = {
   summary:
-    "Recent AI & Machine Engineering graduate from Sona College of Technology (2022–2026, CGPA 7.75) and versatile developer working across five disciplines: 3D modeling (Blender), web development (Next.js/React), mobile apps (Flutter/Android), Windows desktop apps (Electron), and AR/VR (Unity/Unreal). Actively seeking full-time opportunities where I can apply my multi-discipline skill set.",
+    "AI & Machine Learning engineering graduate from Sona College of Technology and a developer working across six disciplines: applied AI/ML, web development (Next.js/React), mobile apps (Flutter/Android), Windows desktop apps (Electron), 3D modelling (Blender), and AR/VR (Unity/Unreal). Actively seeking full-time opportunities where I can apply this multi-discipline skill set.",
   education: {
     degree: "B.E. — Artificial Intelligence & Machine Learning",
     college: "Sona College of Technology, Salem",
     period: "2022 – 2026",
-    gpa: "7.75",
     status: "Graduated",
   },
   focusAreas: [
@@ -210,11 +209,20 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
+    role: "VR Developer",
+    company: "Sashainfinity",
+    period: "Apr 2026 – Aug 2026",
+    description:
+      "Continued as a full-time VR developer after converting from the internship. Extended the Meta Quest 3S lesson library and the shared systems behind it — the editor-driven pipeline that assembles each lesson's five-screen flow, the reusable interaction and hand-tracking layer, and the Quest build and performance-audit tooling that keeps frame rate stable on device.",
+    tech: ["Unity", "C#", "Meta Quest 3S", "OpenXR", "XR Interaction Toolkit", "URP", "Blender"],
+    current: false,
+  },
+  {
     role: "VR Developer Intern",
     company: "Sashainfinity",
-    period: "Feb 2026 – Apr 2026",
+    period: "Jan 2026 – Mar 2026",
     description:
-      "Developed 20 immersive VR math lessons for Meta Quest 3S at Sashainfinity. Built a complete Geometry Library covering lines, angles, triangles, circles, quadrilaterals, coordinate geometry, surface area/volume, number systems, and statistics. Each lesson follows a 5-screen state machine (Welcome → Concept → Game → Quiz → Score) with hand tracking, progressive hints, and randomized replay. Also shipped a WebGL playable build and the Math-Game project with NPC dialogue and character animation.",
+      "Developed immersive VR maths lessons for Meta Quest 3S. Built a Geometry Library covering lines, angles, triangles, circles, quadrilaterals, coordinate geometry, surface area and volume, number systems, and statistics. Each lesson follows a five-screen state machine (Welcome → Concept → Game → Quiz → Score) with hand tracking, progressive hints, and randomised replay. Also shipped a WebGL playable build and the Math-Game project with NPC dialogue and character animation.",
     tech: ["Unity", "C#", "Meta Quest 3S", "OpenXR", "URP", "Blender"],
     current: false,
   },
