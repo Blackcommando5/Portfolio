@@ -32,9 +32,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Committed on purpose: holds only the public deploy URL, no secrets, and the
+# build needs it because NEXT_PUBLIC_* is inlined at build time.
+!.env.production
 
 # vercel
 .vercel
+
+# firebase
+.firebase/
+firebase-debug.log*
 
 # typescript
 *.tsbuildinfo
